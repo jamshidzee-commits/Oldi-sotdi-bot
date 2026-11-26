@@ -1,6 +1,6 @@
 {
- "offset": 422275197,
- "next_id": 1,
+ "offset": 422275204,
+ "next_id": 2,
  "admin": "339489226",
  "users": {
   "339489226": {
@@ -8,21 +8,50 @@
    "link": null,
    "invited": [],
    "unlocked": false,
-   "ads_ts": []
+   "ads_ts": [
+    1795716088.1601098
+   ]
   }
  },
- "ads": {},
- "drafts": {
-  "339489226": {
-   "step": "photos",
-   "photos": [],
+ "ads": {
+  "1": {
+   "uid": "339489226",
+   "uname": "jamzee",
    "title": "3 хонали квартира, 4 чи этаж, Янгийўл шахар марказида",
    "cat": "estate",
    "price": "43000 $",
    "addr": "Янгийўл шахар, Турон кўча 2 дом 39 квартира",
-   "land": "Оазис кафе ёнида"
+   "land": "Оазис кафе ёнида",
+   "photos": [
+    {
+     "t": "photo",
+     "f": "AgACAgIAAxkBAAMQawhz2zrBR2-XOFTzxn-WkGq8ZzYAApAfaxuzMEhIDC0z5zHz5vgBAAMCAAN5AAM9BA"
+    },
+    {
+     "t": "photo",
+     "f": "AgACAgIAAxkBAAMRawhz22EqG8YikSC0zMJ1w_Z3tRQAApEfaxuzMEhIT2s_uNJJgmMBAAMCAAN5AAM9BA"
+    },
+    {
+     "t": "photo",
+     "f": "AgACAgIAAxkBAAMSawhz245Ot2y-kfqETBV-UeFrhjoAApIfaxuzMEhI-aTZSPj4M90BAAMCAAN5AAM9BA"
+    },
+    {
+     "t": "photo",
+     "f": "AgACAgIAAxkBAAMTawhz2_0XUzO33RFw6vqDYQyLgfMAApMfaxuzMEhIozGZHOR4DicBAAMCAAN5AAM9BA"
+    },
+    {
+     "t": "video",
+     "f": "BAACAgIAAxkBAAMUawhz2_dyGigf1Tk-ltrWIbKXyxEAAs2uAAKzMEhIcd3m1FWPRCw9BA"
+    }
+   ],
+   "status": "pending",
+   "ts": 1795716088,
+   "phone_enc": "gAAAAABrCHP49cXv6GZK5DYW_qSbjzSng0J74wJn9YlWS_0E66d6qEId8-vdxvB_DMbXv-OeN5dRMEinXJGURF2989F18LodhQ==",
+   "chan_ids": [],
+   "group": null
   }
  },
+ "drafts": {},
  "links": {},
  "admin_wait": null
 }
