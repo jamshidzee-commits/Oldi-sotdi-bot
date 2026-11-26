@@ -15,6 +15,8 @@ CHANNEL_LINK = "https://t.me/" + CHANNEL.lstrip("@") if CHANNEL.startswith("@") 
 NEED = int(os.environ.get("INVITES_NEEDED") or 5)
 DAILY_LIMIT = int(os.environ.get("DAILY_LIMIT") or 3)
 MAX_PHOTOS = 5
+BOT_USER = os.environ.get("BOT_USERNAME") or "Oldisotdichennel_bot"
+SELL_LINE = f'➕ <a href="https://t.me/{BOT_USER}">E\'lon berish / Подать объявление</a>'
 RUN_SECONDS = int(os.environ.get("RUN_SECONDS") or 55 * 60)
 STATE = os.environ.get("STATE_FILE") or "state.json"
 TG = f"https://api.telegram.org/bot{TOKEN}/"
@@ -273,6 +275,7 @@ def build_caption(ad, phone=None, sold=False):
     emoji, _, _, tag = CATS[ad["cat"]]
     title = e(ad["title"])
     foot = f'👉 <a href="{CHANNEL_LINK}">OLDI SOTDI</a> 👈' if CHANNEL_LINK else "👉 OLDI SOTDI 👈"
+    foot += "\n" + SELL_LINE
     if sold:
         return f"{T['uz']['sold_label']} / {T['ru']['sold_label']}\n\n{emoji} <s>{title}</s>\n💰 <s>{e(ad['price'])}</s>\n\n#{tag}\n{foot}"
     lines = [f"{emoji} <b>{title}</b>", "", f"💰 Narxi: {e(ad['price'])}", f"📍 Manzil: {e(ad['addr'])}",
