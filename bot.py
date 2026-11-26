@@ -767,10 +767,12 @@ def post_welcome(uid):
     """Kanalga tanishuv posti (tugma bilan) joylab, qadab qo'yadi. Faqat admin: /welcome"""
     me = api("getMe") or {}
     bot_url = "https://t.me/" + (me.get("username") or "Oldisotdichennel_bot")
-    text = ("🛍 <b>OLDI SOTDI — oldi-sotdi e'lonlari kanali</b>\n\n"
-            "📝 E'lon berish uchun pastdagi tugmani bosing va botda formani to'ldiring.\n"
+    # Qadalgan xabar tepada faqat birinchi qatorni ko'rsatadi, shuning uchun chaqiriq birinchi qatorda
+    text = ("👇 <b>E'lon berish uchun shu yerni bosing / Подать объявление — нажмите кнопку</b>\n\n"
+            "🛍 <b>OLDI SOTDI</b> — oldi-sotdi e'lonlari kanali\n"
+            "📝 Pastdagi «E'lon berish» tugmasini bosing va botda formani to'ldiring.\n"
             "💬 Savollaringiz bo'lsa, post ostida izoh qoldiring.\n\n"
-            "📝 Чтобы подать объявление, нажмите кнопку ниже и заполните форму в боте.\n"
+            "📝 Нажмите кнопку «Подать объявление» ниже и заполните форму в боте.\n"
             "💬 Вопросы можно писать в комментариях под постом.")
     markup = {"inline_keyboard": [[{"text": "➕ E'lon berish / Подать объявление", "url": bot_url}],
                                   [{"text": "📤 Do'stlarga yuborish / Отправить друзьям",
