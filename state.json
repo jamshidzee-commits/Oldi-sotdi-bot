@@ -1,6 +1,6 @@
 {
- "offset": 422275235,
- "next_id": 2,
+ "offset": 422275243,
+ "next_id": 3,
  "admin": "339489226",
  "users": {
   "339489226": {
@@ -17,7 +17,9 @@
    "link": "https://t.me/+1fwZwXZ0Ar0yNGVi",
    "invited": [],
    "unlocked": false,
-   "ads_ts": []
+   "ads_ts": [
+    1795719252.225169
+   ]
   }
  },
  "ads": {
@@ -56,18 +58,46 @@
    "phone_enc": "gAAAAABrCHP49cXv6GZK5DYW_qSbjzSng0J74wJn9YlWS_0E66d6qEId8-vdxvB_DMbXv-OeN5dRMEinXJGURF2989F18LodhQ==",
    "chan_ids": [],
    "group": null
-  }
- },
- "drafts": {
-  "6908278807": {
-   "step": "land",
-   "photos": [],
+  },
+  "2": {
+   "uid": "6908278807",
+   "uname": "Jimmyjim1212",
    "title": "3 хонали квартира, 4 этаж, 4 этажли дом",
    "cat": "estate",
    "price": "43000 $",
-   "addr": "Янгийул шахар, Турон кўча, 2 дом 39 квартира"
+   "addr": "Янгийул шахар, Турон кўча, 2 дом 39 квартира",
+   "land": "Оазис кафе ёнида",
+   "photos": [
+    {
+     "t": "photo",
+     "f": "AgACAgIAAxkBAANcawiARvGgyRf1gQnrqoURWn4AAS_uAAL6I2sb6-RBSE6gkK5qZaoNAQADAgADeQADPQQ"
+    },
+    {
+     "t": "photo",
+     "f": "AgACAgIAAxkBAANdawiARiBMLSl5PPBEgb8bRUqSphwAAvsjaxvr5EFI8O7v3mAqYw8BAAMCAAN5AAM9BA"
+    },
+    {
+     "t": "photo",
+     "f": "AgACAgIAAxkBAANeawiARl3hA5Np80eNIG8z1rXxY_YAAvwjaxvr5EFIM9E46uBsk6cBAAMCAAN5AAM9BA"
+    },
+    {
+     "t": "photo",
+     "f": "AgACAgIAAxkBAANfawiARgKkjpe3RT2W3eGMJLqrPBQAAv0jaxvr5EFII1YXeaP5KdUBAAMCAAN5AAM9BA"
+    },
+    {
+     "t": "video",
+     "f": "BAACAgIAAxkBAANgawiARqWP_D0XpiJW3WyCZBG8bu8AAumyAALr5EFIWrp0uvi3zyA9BA"
+    }
+   ],
+   "status": "waiting",
+   "ts": 1795719252,
+   "fname": "Jimmy",
+   "phone_enc": "gAAAAABrCIBUjZBSQ233GW_SRJ99Ei6gRgMvVtdMpxHNJeLBKt41rJNrVhhtjxAzRds6gy-T3nKkMPHXTj-WFHB0w8JhMC_YJQ==",
+   "chan_ids": [],
+   "group": null
   }
  },
+ "drafts": {},
  "edit": {},
  "links": {
   "https://t.me/+1fwZwXZ0Ar0yNGVi": "6908278807"
