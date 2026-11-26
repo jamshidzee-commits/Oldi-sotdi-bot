@@ -1,0 +1,74 @@
+name: Oldi sotdi bot
+
+# Работает по кругу: один запуск ~55 минут, в конце запускает следующий. Расписание раз в час — запасной вариант.
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: oldi-sotdi-bot
+  cancel-in-progress: false
+
+jobs:
+  bot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install requests cryptography
+      - name: Bot ishlayapti
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHANNEL_ID: ${{ vars.CHANNEL_ID }}
+          ADMIN_CHAT_ID: ${{ vars.ADMIN_CHAT_ID }}
+          INVITES_NEEDED: ${{ vars.INVITES_NEEDED }}
+          DAILY_LIMIT: ${{ vars.DAILY_LIMIT }}
+        run: |
+          git config user.name "oldi-sotdi-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git fetch -q origin main && git reset -q --hard origin/main
+          save() {
+            touch state.json
+            git add state.json 2>/dev/null
+            git diff --cached --quiet && return 0
+            git commit -q -m "update state"
+            for i in 1 2 3 4 5; do
+              git pull -q --rebase --autostash -X theirs && git push -q && return 0
+              sleep $((i*3))
+            done
+          }
+          end=$((SECONDS + 3300))
+          h=$(sha1sum bot.py | cut -d' ' -f1)
+          RUN_SECONDS=$((end - SECONDS)) python bot.py &
+          pid=$!
+          while kill -0 $pid 2>/dev/null; do
+            sleep 60
+            save || echo "save xato"
+            nh=$(sha1sum bot.py | cut -d' ' -f1)
+            if [ "$nh" != "$h" ] && [ $((end - SECONDS)) -gt 120 ]; then
+              echo "bot.py yangilandi — qayta ishga tushirish"
+              kill $pid 2>/dev/null; wait $pid 2>/dev/null
+              h=$nh
+              RUN_SECONDS=$((end - SECONDS)) python bot.py &
+              pid=$!
+            fi
+          done
+          save || true
+      - name: Keyingi ishga tushirish
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          waiting=$(gh run list -R "$GITHUB_REPOSITORY" -w bot.yml -L 20 --json status \
+            -q '[.[] | select(.status=="queued" or .status=="pending" or .status=="waiting" or .status=="requested")] | length')
+          if [ "$waiting" = "0" ]; then
+            gh workflow run bot.yml -R "$GITHUB_REPOSITORY" --ref main
+          fi
