@@ -778,9 +778,7 @@ def post_welcome(uid):
             "💬 Savollaringiz bo'lsa, post ostida izoh qoldiring.\n\n"
             "📝 Нажмите кнопку «Подать объявление» ниже и заполните форму в боте.\n"
             "💬 Вопросы можно писать в комментариях под постом.")
-    markup = {"inline_keyboard": [[{"text": "➕ E'lon berish / Подать объявление", "url": bot_url}],
-                                  [{"text": "📤 Do'stlarga yuborish / Отправить друзьям",
-                                    "url": share_url(CHANNEL_LINK, "Oldi sotdi — oldi-sotdi e'lonlari kanali / Канал объявлений Oldi sotdi")}]]}
+    markup = {"inline_keyboard": [[{"text": "➕ E'lon berish / Подать объявление", "url": bot_url}]]}
     r = send_logo(CHANNEL, text, markup) or api("sendMessage", chat_id=CHANNEL, text=text, parse_mode="HTML",
                                                 disable_web_page_preview=True, reply_markup=markup)
     if r and r.get("message_id"):
