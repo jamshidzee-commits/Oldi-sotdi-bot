@@ -71,6 +71,7 @@ T = {
         "cancelled": "Bekor qilindi.",
         "lang_set": "Til o'rnatildi.",
         "sold_label": "✅ SOTILDI",
+        "vip_wait": "⏳ {n} soat ichidagi e'lon limiti ({m} ta) tugadi. Keyinroq urinib ko'ring.",
         "st_live": "🟢 kanalda", "st_pending": "⏳ tekshiruvda", "st_waiting": "👥 taklif kutilmoqda",
         "sold_short": "Sotildi", "f_title": "Nomi", "f_price": "Narxi", "f_addr": "Manzil", "f_land": "Mo'ljal", "f_cat": "Toifa",
         "edit_pick": "Nimani o'zgartiramiz?\n(Rasm yoki videoni o'zgartirish uchun e'lonni 🗑 o'chirib, qaytadan bering.)",
@@ -113,6 +114,7 @@ T = {
         "cancelled": "Отменено.",
         "lang_set": "Язык установлен.",
         "sold_label": "✅ ПРОДАНО",
+        "vip_wait": "⏳ Лимит объявлений за {n} ч ({m} шт.) исчерпан. Попробуйте позже.",
         "st_live": "🟢 в канале", "st_pending": "⏳ на проверке", "st_waiting": "👥 ждёт приглашений",
         "sold_short": "Продано", "f_title": "Название", "f_price": "Цена", "f_addr": "Адрес", "f_land": "Ориентир", "f_cat": "Категория",
         "edit_pick": "Что меняем?\n(Чтобы изменить фото или видео, 🗑 удалите объявление и подайте заново.)",
@@ -170,6 +172,7 @@ def save():
 
 
 S = load()
+S.setdefault("vip_codes", {})
 
 
 def user(uid):
@@ -320,6 +323,12 @@ def ensure_pass(uid):
     (PASS_HOURS soat, PASS_ADS ta e'lon) ochiladi. Admin uchun doim ochiq."""
     u = user(uid)
     if is_admin(uid) or slots_left(uid) > 0:
+        return True
+    if u.get("vip") and time.time() >= u["pass_until"]:  # tanishlar (VIP): taklifsiz, har 24 soatda yangi paket
+        u["pass_until"] = time.time() + PASS_HOURS * 3600
+        u["pass_used"] = 0
+        u["unlocked"] = True
+        flush_waiting(uid)
         return True
     av = avail_invited(uid)
     if len(av) < NEED:
@@ -715,6 +724,33 @@ def on_message(m):
     uid = str(m["from"]["id"])
     text = (m.get("text") or "").strip()
     u = user(uid)
+    u["uname"] = m["from"].get("username") or ""
+    u["fname"] = m["from"].get("first_name") or ""
+    if text.startswith("/start v_"):  # bir martalik VIP havola (tanishlar uchun)
+        code = text[len("/start v_"):].strip()
+        if S["vip_codes"].pop(code, None) and not is_admin(uid):
+            u["vip"] = True
+            api("sendMessage", chat_id=int(uid),
+                text="✅ Sizga taklifsiz e'lon berish ochildi / Вам открыт доступ к подаче объявлений без приглашений.")
+            if S.get("admin"):
+                who = f"{u['fname']} (@{u['uname']})" if u["uname"] else u["fname"]
+                api("sendMessage", chat_id=int(S["admin"]), text=f"✅ {who} [id {uid}] получил доступ без приглашений.")
+    if is_admin(uid) and text == "/vip":
+        code = base64.urlsafe_b64encode(os.urandom(6)).decode().rstrip("=").replace("-", "x").replace("_", "y")
+        S["vip_codes"][code] = True
+        return api("sendMessage", chat_id=int(uid), disable_web_page_preview=True,
+                   text=f"🎟 Одноразовая ссылка для знакомого (без приглашений, до {PASS_ADS} объявлений в сутки). "
+                        f"Перешлите её человеку, сработает у первого, кто откроет:\n\nhttps://t.me/{BOT_USER}?start=v_{code}")
+    if is_admin(uid) and text == "/vips":
+        vs = [(i, x) for i, x in S["users"].items() if x.get("vip")]
+        lines = [f"{x.get('fname') or '-'} {('@' + x['uname']) if x.get('uname') else ''} — id {i}" for i, x in vs]
+        return api("sendMessage", chat_id=int(uid), text=("Список:\n" + "\n".join(lines) + "\n\nУбрать: /unvip ID") if vs else "Список пуст.")
+    if is_admin(uid) and text.startswith("/unvip"):
+        tid = text[len("/unvip"):].strip()
+        if tid in S["users"]:
+            S["users"][tid]["vip"] = False
+            return api("sendMessage", chat_id=int(uid), text=f"✅ Доступ без приглашений для id {tid} отключён.")
+        return api("sendMessage", chat_id=int(uid), text="Не нашёл такой id. Список: /vips")
     if text.startswith("/start"):
         if not u["lang"]:
             return api("sendMessage", chat_id=int(uid), text=T["uz"]["lang_prompt"],
@@ -751,6 +787,8 @@ def on_message(m):
         return draft_message(uid, m)
     if text in all_labels("btn_new"):
         if not ensure_pass(uid):
+            if u.get("vip") and time.time() < u["pass_until"]:  # VIP, limit tugagan: forma boshlanmaydi
+                return say(uid, "vip_wait", kb=menu_kb(uid), n=PASS_HOURS, m=PASS_ADS)
             say(uid, "warn", n=NEED, h=PASS_HOURS, m=PASS_ADS, k=len(avail_invited(uid)))
         return start_draft(uid)
     if text in all_labels("btn_my"):
