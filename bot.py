@@ -62,13 +62,19 @@ T = {
         "limit": "24 soat ichida {n} tadan ortiq e'lon berib bo'lmaydi. Keyinroq urinib ko'ring.",
         "approved": "✅ E'loningiz kanalga joylandi:\n{url}",
         "rejected": "❌ E'loningiz rad etildi.\nSabab: {reason}",
-        "my_empty": "Sizda faol e'lonlar yo'q.",
-        "my_title": "Faol e'lonlaringiz. Sotilgan bo'lsa tugmani bosing:",
+        "my_empty": "Sizda e'lonlar yo'q.",
+        "my_title": "Sizning e'lonlaringiz. ✏️ o'zgartirish, ✅ sotildi, 🗑 o'chirish:",
         "sold_btn": "✅ Sotildi: {t}",
         "sold_ok": "✅ E'lon «sotildi» deb belgilandi, aloqa ma'lumotlari o'chirildi.",
         "cancelled": "Bekor qilindi.",
         "lang_set": "Til o'rnatildi.",
         "sold_label": "✅ SOTILDI",
+        "st_live": "🟢 kanalda", "st_pending": "⏳ tekshiruvda", "st_waiting": "👥 taklif kutilmoqda",
+        "sold_short": "Sotildi", "f_title": "Nomi", "f_price": "Narxi", "f_addr": "Manzil", "f_land": "Mo'ljal", "f_cat": "Toifa",
+        "edit_pick": "Nimani o'zgartiramiz?\n(Rasm yoki videoni o'zgartirish uchun e'lonni 🗑 o'chirib, qaytadan bering.)",
+        "edit_ask": "Yangi qiymatni yozing:",
+        "edit_done": "✅ E'lon yangilandi.",
+        "deleted": "🗑 E'lon o'chirildi.",
         "fwd_hint": "👇 Bir nechta do'stga birdaniga yuborish: pastdagi xabarni bosib turing → «Переслать» → kerakli chatlarni belgilang → yuboring.",
     },
     "ru": {
@@ -98,13 +104,19 @@ T = {
         "limit": "Нельзя подавать больше {n} объявлений за 24 часа. Попробуйте позже.",
         "approved": "✅ Ваше объявление опубликовано в канале:\n{url}",
         "rejected": "❌ Ваше объявление отклонено.\nПричина: {reason}",
-        "my_empty": "У вас нет активных объявлений.",
-        "my_title": "Ваши активные объявления. Если продано, нажмите кнопку:",
+        "my_empty": "У вас нет объявлений.",
+        "my_title": "Ваши объявления. ✏️ изменить, ✅ продано, 🗑 удалить:",
         "sold_btn": "✅ Продано: {t}",
         "sold_ok": "✅ Объявление отмечено как «продано», контакты удалены.",
         "cancelled": "Отменено.",
         "lang_set": "Язык установлен.",
         "sold_label": "✅ ПРОДАНО",
+        "st_live": "🟢 в канале", "st_pending": "⏳ на проверке", "st_waiting": "👥 ждёт приглашений",
+        "sold_short": "Продано", "f_title": "Название", "f_price": "Цена", "f_addr": "Адрес", "f_land": "Ориентир", "f_cat": "Категория",
+        "edit_pick": "Что меняем?\n(Чтобы изменить фото или видео, 🗑 удалите объявление и подайте заново.)",
+        "edit_ask": "Напишите новое значение:",
+        "edit_done": "✅ Объявление обновлено.",
+        "deleted": "🗑 Объявление удалено.",
         "fwd_hint": "👇 Чтобы отправить сразу нескольким друзьям: зажмите сообщение ниже → «Переслать» → отметьте нужные чаты → отправьте.",
     },
 }
@@ -135,7 +147,7 @@ def api(method, **params):
 
 # ---------------------------------------------------------------- holat
 def new_state():
-    return {"offset": 0, "next_id": 1, "admin": None, "users": {}, "ads": {}, "drafts": {}, "links": {}, "admin_wait": None}
+    return {"offset": 0, "next_id": 1, "admin": None, "users": {}, "ads": {}, "drafts": {}, "edit": {}, "links": {}, "admin_wait": None}
 
 
 def load():
@@ -371,12 +383,12 @@ def start_draft(uid):
     say(uid, "ask_title", kb=cancel_kb(uid))
 
 
-def cat_kb(uid):
+def cat_kb(uid, prefix="ct:"):
     lang = user(uid).get("lang") or "uz"
     idx = 1 if lang == "uz" else 2
     rows, row = [], []
     for k, v in CATS.items():
-        row.append({"text": f"{v[0]} {v[idx]}", "callback_data": f"ct:{k}"})
+        row.append({"text": f"{v[0]} {v[idx]}", "callback_data": f"{prefix}{k}"})
         if len(row) == 2:
             rows.append(row)
             row = []
@@ -502,7 +514,7 @@ def publish(aid):
         return False
     ad["chan_ids"] = ids
     ad["status"] = "live"
-    ad.pop("phone_enc", None)  # telefon endi state'da saqlanmaydi
+    # telefon shifrlangan holda saqlanadi (e'lonni tahrirlash uchun); sotildi/o'chirilganda butunlay o'chadi
     if CHANNEL.startswith("@"):
         url = f"{CHANNEL_LINK}/{ids[0]}"
         say(ad["uid"], "approved", url=url)
@@ -529,6 +541,7 @@ def mark_sold(aid, uid):
     if g:
         api("editMessageCaption", chat_id=g["chat"], message_id=g["msg"], caption=cap, parse_mode="HTML")
     ad["status"] = "sold"
+    ad.pop("phone_enc", None)
     return True
 
 
@@ -558,6 +571,33 @@ def on_callback(cb):
             api("sendMessage", chat_id=int(uid), text="Укажите причину отказа одним сообщением (или отправьте «-»):")
             api("editMessageReplyMarkup", chat_id=msg["chat"]["id"], message_id=msg["message_id"],
                 reply_markup={"inline_keyboard": [[{"text": "❌ Отклоняется…", "callback_data": "noop"}]]})
+    elif data.startswith("ed:"):
+        aid = data[3:]
+        if own_ad(uid, aid):
+            rows = [[{"text": tr(uid, "f_title"), "callback_data": f"ef:{aid}:title"},
+                     {"text": tr(uid, "f_price"), "callback_data": f"ef:{aid}:price"}],
+                    [{"text": tr(uid, "f_addr"), "callback_data": f"ef:{aid}:addr"},
+                     {"text": tr(uid, "f_land"), "callback_data": f"ef:{aid}:land"}],
+                    [{"text": tr(uid, "f_cat"), "callback_data": f"ef:{aid}:cat"}]]
+            say(uid, "edit_pick", kb={"inline_keyboard": rows})
+    elif data.startswith("ef:"):
+        _, aid, field = data.split(":")
+        if own_ad(uid, aid):
+            if field == "cat":
+                say(uid, "ask_cat", kb=cat_kb(uid, f"ec:{aid}:"))
+            elif field in EDIT_LIMITS:
+                S["edit"][uid] = {"ad": aid, "field": field}
+                say(uid, "edit_ask", kb=cancel_kb(uid))
+    elif data.startswith("ec:"):
+        _, aid, cat = data.split(":")
+        if own_ad(uid, aid) and cat in CATS:
+            apply_edit(aid, "cat", cat)
+            say(uid, "edit_done", kb=menu_kb(uid))
+    elif data.startswith("dl:"):
+        aid = data[3:]
+        ad = S["ads"].get(aid)
+        if delete_ad(aid, uid):
+            say(ad["uid"], "deleted", kb=menu_kb(ad["uid"]))
     elif data.startswith("sd:"):
         if mark_sold(data[3:], uid):
             say(uid, "sold_ok", kb=menu_kb(uid))
@@ -565,11 +605,73 @@ def on_callback(cb):
 
 # ---------------------------------------------------------------- xabarlar
 def show_my(uid):
-    mine = [(i, a) for i, a in S["ads"].items() if a["uid"] == str(uid) and a["status"] == "live"]
+    mine = [(i, a) for i, a in S["ads"].items() if a["uid"] == str(uid) and a["status"] in ("live", "pending", "waiting")][-10:]
     if not mine:
         return say(uid, "my_empty", kb=menu_kb(uid))
-    rows = [[{"text": tr(uid, "sold_btn", t=a["title"][:25]), "callback_data": f"sd:{i}"}] for i, a in mine[-10:]]
-    say(uid, "my_title", kb={"inline_keyboard": rows})
+    lines, rows = [], []
+    for n, (i, a) in enumerate(mine, 1):
+        lines.append(f"{n}. {tr(uid, 'st_' + a['status'])} — {e(a['title'][:40])}")
+        r = [{"text": f"{n} ✏️", "callback_data": f"ed:{i}"}]
+        if a["status"] == "live":
+            r.append({"text": f"{n} ✅ {tr(uid, 'sold_short')}", "callback_data": f"sd:{i}"})
+        r.append({"text": f"{n} 🗑", "callback_data": f"dl:{i}"})
+        rows.append(r)
+    api("sendMessage", chat_id=int(uid), text=tr(uid, "my_title") + "\n\n" + "\n".join(lines), parse_mode="HTML",
+        reply_markup={"inline_keyboard": rows})
+
+
+# ---------------------------------------------------------------- tahrirlash / o'chirish
+EDIT_LIMITS = {"title": 80, "price": 40, "addr": 120, "land": 120}
+
+
+def own_ad(uid, aid, statuses=("live", "pending", "waiting")):
+    ad = S["ads"].get(aid)
+    return ad if ad and ad["uid"] == str(uid) and ad["status"] in statuses else None
+
+
+def ad_phone(ad):
+    return FERNET.decrypt(ad["phone_enc"].encode()).decode() if ad.get("phone_enc") else ""
+
+
+def refresh_live(aid):
+    ad = S["ads"][aid]
+    cap = build_caption(ad, ad_phone(ad))
+    api("editMessageCaption", chat_id=CHANNEL, message_id=ad["chan_ids"][0], caption=cap, parse_mode="HTML")
+    g = ad.get("group")
+    if g:
+        api("editMessageCaption", chat_id=g["chat"], message_id=g["msg"], caption=cap, parse_mode="HTML")
+
+
+def apply_edit(aid, field, value):
+    ad = S["ads"][aid]
+    ad[field] = value
+    frm = {"id": int(ad["uid"]), "first_name": ad.get("fname") or "user", "username": ad.get("uname")}
+    if ad["status"] == "live":
+        refresh_live(aid)
+        adm = S.get("admin")
+        if adm:
+            api("sendMessage", chat_id=int(adm), parse_mode="HTML", disable_web_page_preview=True,
+                text=f"✏️ Объявление #{aid} изменено продавцом (в канале уже обновлено):\n\n{build_caption(ad, ad_phone(ad))}",
+                reply_markup={"inline_keyboard": [[{"text": "🗑 Удалить пост", "callback_data": f"dl:{aid}"}]]})
+    elif ad["status"] == "pending":  # admin eski xabarni ko'rgan bo'lishi mumkin: yangilangan nusxani yuboramiz
+        send_to_admin(aid, ad, ad_phone(ad), frm)
+
+
+def delete_ad(aid, uid):
+    ad = S["ads"].get(aid)
+    if not ad or ad["status"] not in ("live", "pending", "waiting"):
+        return False
+    if not (is_admin(uid) or ad["uid"] == str(uid)):
+        return False
+    if ad["status"] == "live":
+        for mid in ad.get("chan_ids", []):
+            api("deleteMessage", chat_id=CHANNEL, message_id=mid)
+        g = ad.get("group")
+        if g:
+            api("deleteMessage", chat_id=g["chat"], message_id=g["msg"])
+    ad["status"] = "deleted"
+    ad.pop("phone_enc", None)
+    return True
 
 
 def on_message(m):
@@ -603,7 +705,19 @@ def on_message(m):
                    reply_markup={"inline_keyboard": [[{"text": "🇺🇿 O'zbekcha", "callback_data": "lg:uz"},
                                                        {"text": "🇷🇺 Русский", "callback_data": "lg:ru"}]]})
     if text in all_labels("btn_cancel") or text == "/cancel":
+        S["edit"].pop(uid, None)
         return cancel(uid)
+    if uid in S["edit"]:
+        ed = S["edit"][uid]
+        if not text:
+            return say(uid, "text_only")
+        if len(text) > EDIT_LIMITS[ed["field"]]:
+            return say(uid, "too_long", m=EDIT_LIMITS[ed["field"]])
+        S["edit"].pop(uid)
+        if own_ad(uid, ed["ad"]):
+            apply_edit(ed["ad"], ed["field"], clean(text, EDIT_LIMITS[ed["field"]]))
+            say(uid, "edit_done", kb=menu_kb(uid))
+        return
     if uid in S["drafts"]:
         return draft_message(uid, m)
     if text in all_labels("btn_new"):
