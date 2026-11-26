@@ -1,5 +1,5 @@
 {
- "offset": 422275262,
+ "offset": 422275264,
  "next_id": 3,
  "admin": "339489226",
  "users": {
@@ -21,15 +21,16 @@
    "lang": "uz",
    "link": "https://t.me/+1fwZwXZ0Ar0yNGVi",
    "invited": [
-    "2112564437"
+    "2112564437",
+    "5757531047"
    ],
-   "unlocked": false,
+   "unlocked": true,
    "ads_ts": [
     1795719252.225169
    ],
    "used_inv": [],
-   "pass_until": 0,
-   "pass_used": 0,
+   "pass_until": 1795809461.4606953,
+   "pass_used": 1,
    "uname": "Jimmyjim1212",
    "fname": "Jimmy",
    "vip": true
@@ -102,17 +103,25 @@
      "f": "BAACAgIAAxkBAANgawiARqWP_D0XpiJW3WyCZBG8bu8AAumyAALr5EFIWrp0uvi3zyA9BA"
     }
    ],
-   "status": "waiting",
+   "status": "live",
    "ts": 1795719252,
    "fname": "Jimmy",
    "phone_enc": "gAAAAABrCIBUjZBSQ233GW_SRJ99Ei6gRgMvVtdMpxHNJeLBKt41rJNrVhhtjxAzRds6gy-T3nKkMPHXTj-WFHB0w8JhMC_YJQ==",
-   "chan_ids": [],
+   "chan_ids": [
+    18,
+    19,
+    20,
+    21,
+    22
+   ],
    "group": null
   }
  },
  "drafts": {},
  "edit": {},
- "credited": {},
+ "credited": {
+  "5757531047": "6908278807"
+ },
  "links": {
   "https://t.me/+1fwZwXZ0Ar0yNGVi": "6908278807"
  },
