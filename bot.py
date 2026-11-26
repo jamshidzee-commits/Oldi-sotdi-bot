@@ -42,6 +42,8 @@ T = {
         "btn_share": "📤 Do'stlarga yuborish", "btn_cancel": "❌ Bekor qilish", "btn_done": "✅ Tayyor", "btn_phone": "📞 Raqamni yuborish",
         "locked": "🔒 E'lon berish uchun kanalga {n} ta odamni taklif qiling.\n\nSizning havolangiz:\n{link}\n\nHozircha: {k}/{n}\nOdamlar shu havola orqali kanalga qo'shilishi va kanalda qolishi kerak.",
         "unlocked": "🎉 Tabriklaymiz! {n} ta odam qo'shildi. Endi e'lon berishingiz mumkin.",
+        "warn": "ℹ️ Eslatma: e'loningiz tekshirishga yuborilishi uchun kanalga {n} ta odamni taklif qilishingiz kerak (hozircha {k}/{n}). Avval formani to'ldiring, odamlar qo'shilgach e'lon avtomatik tekshirishga ketadi.",
+        "saved_waiting": "✅ E'loningiz saqlandi. U tekshirishga {n} ta odam kanalga qo'shilgach avtomatik yuboriladi.\n\nSizning havolangiz:\n{link}\n\nHozircha: {k}/{n}",
         "progress": "👥 Yangi a'zo qo'shildi: {k}/{n}",
         "link_msg": "Sizning taklif havolangiz:\n{link}\n\nQo'shilganlar: {k}/{n}",
         "ask_title": "Nima sotmoqchisiz? Qisqa nom yozing (masalan: iPhone 13, 128 GB).",
@@ -76,6 +78,8 @@ T = {
         "btn_share": "📤 Отправить друзьям", "btn_cancel": "❌ Отмена", "btn_done": "✅ Готово", "btn_phone": "📞 Отправить номер",
         "locked": "🔒 Чтобы подать объявление, пригласите в канал {n} человек.\n\nВаша ссылка:\n{link}\n\nПока: {k}/{n}\nЛюди должны вступить в канал по этой ссылке и остаться в нём.",
         "unlocked": "🎉 Поздравляем! Вступили {n} человек. Теперь можно подавать объявления.",
+        "warn": "ℹ️ Напоминание: чтобы объявление ушло на проверку, нужно пригласить в канал {n} человек (пока {k}/{n}). Сначала заполните форму, а когда люди вступят, объявление автоматически уйдёт на проверку.",
+        "saved_waiting": "✅ Объявление сохранено. Оно автоматически уйдёт на проверку, когда в канал вступят {n} человек.\n\nВаша ссылка:\n{link}\n\nПока: {k}/{n}",
         "progress": "👥 Новый участник: {k}/{n}",
         "link_msg": "Ваша ссылка-приглашение:\n{link}\n\nВступили: {k}/{n}",
         "ask_title": "Что продаёте? Напишите короткое название (например: iPhone 13, 128 GB).",
@@ -291,8 +295,23 @@ def can_post(uid):
         return True
     if len(valid_invited(uid)) >= NEED:
         u["unlocked"] = True
+        flush_waiting(uid)
         return True
     return False
+
+
+def flush_waiting(uid):
+    """Ochilgandan keyin kutayotgan e'lonlarni adminga tasdiqlash uchun yuboradi."""
+    n = 0
+    for aid, ad in S["ads"].items():
+        if ad["uid"] == str(uid) and ad["status"] == "waiting":
+            phone = FERNET.decrypt(ad["phone_enc"].encode()).decode()
+            ad["status"] = "pending"
+            send_to_admin(aid, ad, phone, {"id": int(uid), "first_name": ad.get("fname") or "user",
+                                           "username": ad.get("uname")})
+            n += 1
+    if n:
+        say(uid, "sent", kb=menu_kb(uid))
 
 
 def on_chat_member(cm):
@@ -316,6 +335,7 @@ def on_chat_member(cm):
     if k >= NEED:
         u["unlocked"] = True
         say(inviter, "unlocked", kb=menu_kb(inviter), n=NEED)
+        flush_waiting(inviter)
     else:
         say(inviter, "progress", k=k, n=NEED)
 
@@ -424,12 +444,22 @@ def submit_ad(uid, m, phone):
     aid = str(S["next_id"])
     S["next_id"] += 1
     ad = {"uid": str(uid), "uname": (m["from"].get("username") or ""), "title": d["title"], "cat": d["cat"], "price": d["price"],
-          "addr": d["addr"], "land": d["land"], "photos": d["photos"], "status": "pending", "ts": int(now),
+          "addr": d["addr"], "land": d["land"], "photos": d["photos"], "status": "waiting", "ts": int(now),
+          "fname": m["from"].get("first_name") or "",
           "phone_enc": FERNET.encrypt(phone.encode()).decode(), "chan_ids": [], "group": None}
     S["ads"][aid] = ad
     u["ads_ts"].append(now)
-    say(uid, "sent", kb=menu_kb(uid))
-    send_to_admin(aid, ad, phone, m["from"])
+    ok = can_post(uid)  # (ochilish shu yerda yuz bersa, flush_waiting e'lonni allaqachon yuborgan)
+    if ad["status"] == "pending":
+        pass
+    elif ok:
+        ad["status"] = "pending"
+        say(uid, "sent", kb=menu_kb(uid))
+        send_to_admin(aid, ad, phone, m["from"])
+    else:  # taklif qilish kerak: e'lon saqlanadi, 5 kishi qo'shilgach adminga ketadi
+        lk = make_link(uid)
+        say(uid, "saved_waiting", kb=share_kb(uid, lk), n=NEED, k=len(valid_invited(uid)), link=lk)
+        send_invite(uid, lk)
 
 
 def send_media(chat, items, caption=None):
@@ -578,10 +608,7 @@ def on_message(m):
         return draft_message(uid, m)
     if text in all_labels("btn_new"):
         if not can_post(uid):
-            k = len(valid_invited(uid))
-            lk = make_link(uid)
-            say(uid, "locked", kb=share_kb(uid, lk), n=NEED, k=k, link=lk)
-            return send_invite(uid, lk)
+            say(uid, "warn", n=NEED, k=len(valid_invited(uid)))
         return start_draft(uid)
     if text in all_labels("btn_my"):
         return show_my(uid)
