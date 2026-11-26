@@ -1,5 +1,5 @@
 {
- "offset": 422275206,
+ "offset": 422275211,
  "next_id": 2,
  "admin": "339489226",
  "users": {
@@ -11,6 +11,13 @@
    "ads_ts": [
     1795716088.1601098
    ]
+  },
+  "6908278807": {
+   "lang": "uz",
+   "link": "https://t.me/+1fwZwXZ0Ar0yNGVi",
+   "invited": [],
+   "unlocked": false,
+   "ads_ts": []
   }
  },
  "ads": {
@@ -52,6 +59,8 @@
   }
  },
  "drafts": {},
- "links": {},
+ "links": {
+  "https://t.me/+1fwZwXZ0Ar0yNGVi": "6908278807"
+ },
  "admin_wait": null
 }
