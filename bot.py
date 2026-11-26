@@ -392,8 +392,7 @@ def clean(s, n):
 def build_caption(ad, phone=None, sold=False):
     emoji, _, _, tag = CATS[ad["cat"]]
     title = e(ad["title"])
-    foot = f'👉 <a href="{CHANNEL_LINK}">OLDI SOTDI</a> 👈' if CHANNEL_LINK else "👉 OLDI SOTDI 👈"
-    foot += "\n" + SELL_LINE
+    foot = ('👆👆👆 <a href="%s">Kanalga o\'tish / Перейти в канал</a>' % CHANNEL_LINK) if CHANNEL_LINK else "👆👆👆 OLDI SOTDI"
     if sold:
         return f"{T['uz']['sold_label']} / {T['ru']['sold_label']}\n\n{emoji} <s>{title}</s>\n💰 <s>{e(ad['price'])}</s>\n\n#{tag}\n{foot}"
     lines = [f"{emoji} <b>{title}</b>", "", f"💰 Narxi: {e(ad['price'])}", f"📍 Manzil: {e(ad['addr'])}",
