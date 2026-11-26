@@ -1,5 +1,5 @@
 {
- "offset": 422275194,
+ "offset": 422275195,
  "next_id": 1,
  "admin": "339489226",
  "users": {
@@ -14,10 +14,11 @@
  "ads": {},
  "drafts": {
   "339489226": {
-   "step": "price",
+   "step": "addr",
    "photos": [],
    "title": "3 хонали квартира, 4 чи этаж, Янгийўл шахар марказида",
-   "cat": "estate"
+   "cat": "estate",
+   "price": "43000 $"
   }
  },
  "links": {},
