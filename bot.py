@@ -14,7 +14,8 @@ TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
 CHANNEL = os.environ.get("CHANNEL_ID") or "@oldisotdichennel"
 CHANNEL_LINK = "https://t.me/" + CHANNEL.lstrip("@") if CHANNEL.startswith("@") else ""
 NEED = int(os.environ.get("INVITES_NEEDED") or 5)
-DAILY_LIMIT = int(os.environ.get("DAILY_LIMIT") or 3)
+PASS_ADS = int(os.environ.get("DAILY_LIMIT") or 3)   # bitta paketda nechta e'lon
+PASS_HOURS = 24                                       # paket necha soat amal qiladi
 MAX_PHOTOS = 5
 LOGO = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo.jpg")
 BOT_USER = os.environ.get("BOT_USERNAME") or "Oldisotdichennel_bot"
@@ -41,9 +42,9 @@ T = {
         "btn_new": "➕ E'lon berish", "btn_my": "📋 E'lonlarim", "btn_link": "🔗 Taklif havolam", "btn_lang": "🌐 Til / Язык",
         "btn_share": "📤 Do'stlarga yuborish", "btn_cancel": "❌ Bekor qilish", "btn_done": "✅ Tayyor", "btn_phone": "📞 Raqamni yuborish",
         "locked": "🔒 E'lon berish uchun kanalga {n} ta odamni taklif qiling.\n\nSizning havolangiz:\n{link}\n\nHozircha: {k}/{n}\nOdamlar shu havola orqali kanalga qo'shilishi va kanalda qolishi kerak.",
-        "unlocked": "🎉 Tabriklaymiz! {n} ta odam qo'shildi. Endi e'lon berishingiz mumkin.",
-        "warn": "ℹ️ Eslatma: e'loningiz tekshirishga yuborilishi uchun kanalga {n} ta odamni taklif qilishingiz kerak (hozircha {k}/{n}). Avval formani to'ldiring, odamlar qo'shilgach e'lon avtomatik tekshirishga ketadi.",
-        "saved_waiting": "✅ E'loningiz saqlandi. U tekshirishga {n} ta odam kanalga qo'shilgach avtomatik yuboriladi.\n\nSizning havolangiz:\n{link}\n\nHozircha: {k}/{n}",
+        "unlocked": "🎉 Tabriklaymiz! {n} ta odam qo'shildi. Endi {h} soat ichida {m} tagacha e'lon berishingiz mumkin. Keyin yana e'lon berish uchun qaytadan {n} ta yangi odam taklif qilish kerak.",
+        "warn": "ℹ️ Eslatma: kanalga {n} ta odamni taklif qilsangiz, {h} soat ichida {m} tagacha e'lon bera olasiz (hozircha {k}/{n}). Avval formani to'ldiring, odamlar qo'shilgach e'lon avtomatik tekshirishga ketadi.",
+        "saved_waiting": "✅ E'loningiz saqlandi. U tekshirishga {n} ta yangi odam kanalga qo'shilgach avtomatik yuboriladi.\n\nSizning havolangiz:\n{link}\n\nHozircha: {k}/{n}",
         "progress": "👥 Yangi a'zo qo'shildi: {k}/{n}",
         "link_msg": "Sizning taklif havolangiz:\n{link}\n\nQo'shilganlar: {k}/{n}",
         "ask_title": "Nima sotmoqchisiz? Qisqa nom yozing (masalan: iPhone 13, 128 GB).",
@@ -59,7 +60,7 @@ T = {
         "too_long": "Juda uzun matn. Qisqaroq yozing (eng ko'pi {m} belgi).",
         "text_only": "Iltimos, matn yozing.",
         "sent": "✅ E'loningiz tekshirishga yuborildi. Tasdiqlangach kanalda chiqadi.",
-        "limit": "24 soat ichida {n} tadan ortiq e'lon berib bo'lmaydi. Keyinroq urinib ko'ring.",
+        "limit": "Bir vaqtda {n} tadan ortiq e'lon kutishi mumkin emas. Avval mavjudlarini o'chiring yoki ular yuborilishini kuting.",
         "approved": "✅ E'loningiz kanalga joylandi:\n{url}",
         "rejected": "❌ E'loningiz rad etildi.\nSabab: {reason}",
         "my_empty": "Sizda e'lonlar yo'q.",
@@ -83,9 +84,9 @@ T = {
         "btn_new": "➕ Подать объявление", "btn_my": "📋 Мои объявления", "btn_link": "🔗 Моя ссылка", "btn_lang": "🌐 Til / Язык",
         "btn_share": "📤 Отправить друзьям", "btn_cancel": "❌ Отмена", "btn_done": "✅ Готово", "btn_phone": "📞 Отправить номер",
         "locked": "🔒 Чтобы подать объявление, пригласите в канал {n} человек.\n\nВаша ссылка:\n{link}\n\nПока: {k}/{n}\nЛюди должны вступить в канал по этой ссылке и остаться в нём.",
-        "unlocked": "🎉 Поздравляем! Вступили {n} человек. Теперь можно подавать объявления.",
-        "warn": "ℹ️ Напоминание: чтобы объявление ушло на проверку, нужно пригласить в канал {n} человек (пока {k}/{n}). Сначала заполните форму, а когда люди вступят, объявление автоматически уйдёт на проверку.",
-        "saved_waiting": "✅ Объявление сохранено. Оно автоматически уйдёт на проверку, когда в канал вступят {n} человек.\n\nВаша ссылка:\n{link}\n\nПока: {k}/{n}",
+        "unlocked": "🎉 Поздравляем! Вступили {n} человек. Теперь в течение {h} часов можно подать до {m} объявлений. Чтобы подавать дальше, нужно снова пригласить {n} новых человек.",
+        "warn": "ℹ️ Напоминание: если пригласите в канал {n} человек, то в течение {h} часов сможете подать до {m} объявлений (пока {k}/{n}). Сначала заполните форму, а когда люди вступят, объявление автоматически уйдёт на проверку.",
+        "saved_waiting": "✅ Объявление сохранено. Оно автоматически уйдёт на проверку, когда в канал вступят {n} новых человек.\n\nВаша ссылка:\n{link}\n\nПока: {k}/{n}",
         "progress": "👥 Новый участник: {k}/{n}",
         "link_msg": "Ваша ссылка-приглашение:\n{link}\n\nВступили: {k}/{n}",
         "ask_title": "Что продаёте? Напишите короткое название (например: iPhone 13, 128 GB).",
@@ -101,7 +102,7 @@ T = {
         "too_long": "Слишком длинный текст. Напишите короче (не больше {m} символов).",
         "text_only": "Пожалуйста, напишите текстом.",
         "sent": "✅ Ваше объявление отправлено на проверку. После одобрения оно появится в канале.",
-        "limit": "Нельзя подавать больше {n} объявлений за 24 часа. Попробуйте позже.",
+        "limit": "Нельзя держать в ожидании больше {n} объявлений одновременно. Сначала удалите имеющиеся или дождитесь их отправки.",
         "approved": "✅ Ваше объявление опубликовано в канале:\n{url}",
         "rejected": "❌ Ваше объявление отклонено.\nПричина: {reason}",
         "my_empty": "У вас нет объявлений.",
@@ -171,7 +172,10 @@ S = load()
 
 
 def user(uid):
-    u = S["users"].setdefault(str(uid), {"lang": None, "link": None, "invited": [], "unlocked": False, "ads_ts": []})
+    u = S["users"].setdefault(str(uid), {"lang": None, "link": None, "invited": [], "unlocked": False})
+    u.setdefault("used_inv", [])    # oldingi paketlarga sarflangan taklif qilinganlar
+    u.setdefault("pass_until", 0)   # paket tugash vaqti
+    u.setdefault("pass_used", 0)    # paketda yuborilgan e'lonlar soni
     return u
 
 
@@ -299,25 +303,44 @@ def valid_invited(uid):
     return ok
 
 
-def can_post(uid):
-    """Foydalanuvchiga e'lon berish ochiqmi? Admin uchun doim ochiq."""
+def avail_invited(uid):
+    """Hali paketga sarflanmagan va kanalda qolgan taklif qilinganlar."""
+    used = set(user(uid)["used_inv"])
+    return [v for v in valid_invited(uid) if v not in used]
+
+
+def slots_left(uid):
     u = user(uid)
-    if is_admin(uid) or u["unlocked"]:
+    return max(0, PASS_ADS - u["pass_used"]) if time.time() < u["pass_until"] else 0
+
+
+def ensure_pass(uid):
+    """E'lon berish mumkinmi? Faol paket bo'lsa ha. Yo'q bo'lsa, NEED ta yangi taklif qilingan bo'lsa yangi paket
+    (PASS_HOURS soat, PASS_ADS ta e'lon) ochiladi. Admin uchun doim ochiq."""
+    u = user(uid)
+    if is_admin(uid) or slots_left(uid) > 0:
         return True
-    if len(valid_invited(uid)) >= NEED:
-        u["unlocked"] = True
-        flush_waiting(uid)
-        return True
-    return False
+    av = avail_invited(uid)
+    if len(av) < NEED:
+        return False
+    u["used_inv"] += av[:NEED]
+    u["pass_until"] = time.time() + PASS_HOURS * 3600
+    u["pass_used"] = 0
+    u["unlocked"] = True
+    say(uid, "unlocked", kb=menu_kb(uid), n=NEED, h=PASS_HOURS, m=PASS_ADS)
+    flush_waiting(uid)
+    return True
 
 
 def flush_waiting(uid):
-    """Ochilgandan keyin kutayotgan e'lonlarni adminga tasdiqlash uchun yuboradi."""
+    """Paket ochilgach kutayotgan e'lonlarni (limit doirasida) adminga tasdiqlash uchun yuboradi."""
     n = 0
     for aid, ad in S["ads"].items():
-        if ad["uid"] == str(uid) and ad["status"] == "waiting":
+        if ad["uid"] == str(uid) and ad["status"] == "waiting" and (is_admin(uid) or slots_left(uid) > 0):
             phone = FERNET.decrypt(ad["phone_enc"].encode()).decode()
             ad["status"] = "pending"
+            if not is_admin(uid):
+                user(uid)["pass_used"] += 1
             send_to_admin(aid, ad, phone, {"id": int(uid), "first_name": ad.get("fname") or "user",
                                            "username": ad.get("uname")})
             n += 1
@@ -344,15 +367,11 @@ def on_chat_member(cm):
     u = user(inviter)
     if str(joined["id"]) not in u["invited"]:
         u["invited"].append(str(joined["id"]))
-    if u["unlocked"]:
+    if slots_left(inviter) > 0:  # faol paket bor: keyingi paket uchun yig'ilmoqda, bildirishnoma shart emas
         return
-    k = len(valid_invited(inviter))
-    if k >= NEED:
-        u["unlocked"] = True
-        say(inviter, "unlocked", kb=menu_kb(inviter), n=NEED)
-        flush_waiting(inviter)
-    else:
-        say(inviter, "progress", k=k, n=NEED)
+    if ensure_pass(inviter):
+        return
+    say(inviter, "progress", k=len(avail_invited(inviter)), n=NEED)
 
 
 # ---------------------------------------------------------------- e'lon matni
@@ -449,12 +468,11 @@ def draft_message(uid, m):
 
 
 def submit_ad(uid, m, phone):
-    u = user(uid)
     now = time.time()
-    u["ads_ts"] = [t for t in u["ads_ts"] if now - t < 86400]
-    if not is_admin(uid) and len(u["ads_ts"]) >= DAILY_LIMIT:
+    waiting = [1 for a in S["ads"].values() if a["uid"] == str(uid) and a["status"] == "waiting"]
+    if not is_admin(uid) and len(waiting) >= PASS_ADS:
         S["drafts"].pop(str(uid), None)
-        return say(uid, "limit", kb=menu_kb(uid), n=DAILY_LIMIT)
+        return say(uid, "limit", kb=menu_kb(uid), n=PASS_ADS)
     d = S["drafts"].pop(str(uid))
     aid = str(S["next_id"])
     S["next_id"] += 1
@@ -463,17 +481,18 @@ def submit_ad(uid, m, phone):
           "fname": m["from"].get("first_name") or "",
           "phone_enc": FERNET.encrypt(phone.encode()).decode(), "chan_ids": [], "group": None}
     S["ads"][aid] = ad
-    u["ads_ts"].append(now)
-    ok = can_post(uid)  # (ochilish shu yerda yuz bersa, flush_waiting e'lonni allaqachon yuborgan)
+    ok = ensure_pass(uid)  # (paket shu yerda ochilsa, flush_waiting e'lonni allaqachon yuborgan bo'ladi)
     if ad["status"] == "pending":
         pass
     elif ok:
         ad["status"] = "pending"
+        if not is_admin(uid):
+            user(uid)["pass_used"] += 1
         say(uid, "sent", kb=menu_kb(uid))
         send_to_admin(aid, ad, phone, m["from"])
-    else:  # taklif qilish kerak: e'lon saqlanadi, 5 kishi qo'shilgach adminga ketadi
+    else:  # paket yo'q: e'lon saqlanadi, NEED ta yangi odam qo'shilgach adminga ketadi
         lk = make_link(uid)
-        say(uid, "saved_waiting", kb=menu_kb(uid), n=NEED, k=len(valid_invited(uid)), link=lk)  # menyuni qaytaradi
+        say(uid, "saved_waiting", kb=menu_kb(uid), n=NEED, k=len(avail_invited(uid)), link=lk)  # menyuni qaytaradi
         send_invite(uid, lk)
 
 
@@ -530,6 +549,9 @@ def reject(aid, reason):
         return
     ad["status"] = "rejected"
     ad.pop("phone_enc", None)
+    if not is_admin(ad["uid"]):  # rad etilgan e'lon paketdan hisoblanmaydi
+        u = user(ad["uid"])
+        u["pass_used"] = max(0, u["pass_used"] - 1)
     say(ad["uid"], "rejected", reason=reason or "-")
 
 
@@ -724,14 +746,14 @@ def on_message(m):
     if uid in S["drafts"]:
         return draft_message(uid, m)
     if text in all_labels("btn_new"):
-        if not can_post(uid):
-            say(uid, "warn", n=NEED, k=len(valid_invited(uid)))
+        if not ensure_pass(uid):
+            say(uid, "warn", n=NEED, h=PASS_HOURS, m=PASS_ADS, k=len(avail_invited(uid)))
         return start_draft(uid)
     if text in all_labels("btn_my"):
         return show_my(uid)
     if text in all_labels("btn_link"):
         lk = make_link(uid)
-        say(uid, "link_msg", kb=share_kb(uid, lk), link=lk, k=len(valid_invited(uid)), n=NEED)
+        say(uid, "link_msg", kb=share_kb(uid, lk), link=lk, k=len(avail_invited(uid)), n=NEED)
         return send_invite(uid, lk)
     if text in all_labels("btn_lang"):
         u["lang"] = None
