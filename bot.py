@@ -222,8 +222,11 @@ def share_kb(uid, link):
 def send_invite(uid, link):
     """Do'stlarga bir yo'la forward qilish uchun tayyor taklif xabari (ssilka + matn)."""
     say(uid, "fwd_hint")
-    api("sendMessage", chat_id=int(uid), disable_web_page_preview=True,
-        text=f"🛍 OLDI SOTDI — oldi-sotdi e'lonlari kanali!\nКанал объявлений: купля-продажа.\n\n👉 {link}")
+    # Havola ko'rinishi (kanal avatari, nomi, "Qo'shilish" tugmasi) Telegram'da avtomatik chiqadi
+    api("sendMessage", chat_id=int(uid),
+        text=f"🛍 OLDI SOTDI — oldi-sotdi e'lonlari kanali!\n✅ Sotib oling, soting, e'lon bering.\n\n"
+             f"Канал объявлений: купля-продажа. Подписывайтесь 👇\n\n👉 {link}",
+        link_preview_options={"url": link, "prefer_large_media": True})
 
 
 def all_labels(key):
