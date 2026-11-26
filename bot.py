@@ -504,6 +504,8 @@ def on_message(m):
                                                            {"text": "🇷🇺 Русский", "callback_data": "lg:ru"}]]})
         S["drafts"].pop(uid, None)
         return say(uid, "welcome", kb=menu_kb(uid))
+    if is_admin(uid) and text == "/welcome":
+        return post_welcome(uid)
     # admin rad etish sababini yozmoqda
     if is_admin(uid) and S.get("admin_wait") and text:
         aid, S["admin_wait"] = S["admin_wait"], None
@@ -532,6 +534,24 @@ def on_message(m):
                    reply_markup={"inline_keyboard": [[{"text": "🇺🇿 O'zbekcha", "callback_data": "lg:uz"},
                                                        {"text": "🇷🇺 Русский", "callback_data": "lg:ru"}]]})
     say(uid, "welcome", kb=menu_kb(uid))
+
+
+def post_welcome(uid):
+    """Kanalga tanishuv posti (tugma bilan) joylab, qadab qo'yadi. Faqat admin: /welcome"""
+    me = api("getMe") or {}
+    bot_url = "https://t.me/" + (me.get("username") or "Oldisotdichennel_bot")
+    text = ("🛍 <b>OLDI SOTDI — oldi-sotdi e'lonlari kanali</b>\n\n"
+            "📝 E'lon berish uchun pastdagi tugmani bosing va botda formani to'ldiring.\n"
+            "💬 Savollaringiz bo'lsa, post ostida izoh qoldiring.\n\n"
+            "📝 Чтобы подать объявление, нажмите кнопку ниже и заполните форму в боте.\n"
+            "💬 Вопросы можно писать в комментариях под постом.")
+    r = api("sendMessage", chat_id=CHANNEL, text=text, parse_mode="HTML", disable_web_page_preview=True,
+            reply_markup={"inline_keyboard": [[{"text": "➕ E'lon berish / Подать объявление", "url": bot_url}]]})
+    if r and r.get("message_id"):
+        api("pinChatMessage", chat_id=CHANNEL, message_id=r["message_id"], disable_notification=True)
+        api("sendMessage", chat_id=int(uid), text="✅ Приветственный пост опубликован и закреплён в канале.")
+    else:
+        api("sendMessage", chat_id=int(uid), text="⚠️ Не удалось опубликовать пост в канале (проверьте права бота).")
 
 
 def handle(upd):
