@@ -1,10 +1,23 @@
 {
- "offset": 0,
+ "offset": 422275192,
  "next_id": 1,
  "admin": "339489226",
- "users": {},
+ "users": {
+  "339489226": {
+   "lang": "uz",
+   "link": null,
+   "invited": [],
+   "unlocked": false,
+   "ads_ts": []
+  }
+ },
  "ads": {},
- "drafts": {},
+ "drafts": {
+  "339489226": {
+   "step": "title",
+   "photos": []
+  }
+ },
  "links": {},
  "admin_wait": null
 }
