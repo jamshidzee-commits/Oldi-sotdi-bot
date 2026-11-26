@@ -1,5 +1,5 @@
 {
- "offset": 422275246,
+ "offset": 422275248,
  "next_id": 3,
  "admin": "339489226",
  "users": {
@@ -10,7 +10,10 @@
    "unlocked": false,
    "ads_ts": [
     1795716088.1601098
-   ]
+   ],
+   "used_inv": [],
+   "pass_until": 0,
+   "pass_used": 0
   },
   "6908278807": {
    "lang": "uz",
@@ -101,6 +104,7 @@
  },
  "drafts": {},
  "edit": {},
+ "credited": {},
  "links": {
   "https://t.me/+1fwZwXZ0Ar0yNGVi": "6908278807"
  },
