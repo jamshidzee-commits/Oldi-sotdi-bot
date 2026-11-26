@@ -7,6 +7,7 @@
 - "Sotildi" tugmasi: postdan telefon va manzil o'chadi.
 """
 import os, re, json, time, html, base64, hashlib, requests
+from urllib.parse import quote
 from cryptography.fernet import Fernet
 
 TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
@@ -37,7 +38,7 @@ T = {
         "lang_prompt": "Tilni tanlang / Выберите язык",
         "welcome": "Assalomu alaykum! 👋\nBu yerda e'lon berishingiz mumkin. Pastdagi tugmalardan foydalaning.",
         "btn_new": "➕ E'lon berish", "btn_my": "📋 E'lonlarim", "btn_link": "🔗 Taklif havolam", "btn_lang": "🌐 Til / Язык",
-        "btn_cancel": "❌ Bekor qilish", "btn_done": "✅ Tayyor", "btn_phone": "📞 Raqamni yuborish",
+        "btn_share": "📤 Do'stlarga yuborish", "btn_cancel": "❌ Bekor qilish", "btn_done": "✅ Tayyor", "btn_phone": "📞 Raqamni yuborish",
         "locked": "🔒 E'lon berish uchun kanalga {n} ta odamni taklif qiling.\n\nSizning havolangiz:\n{link}\n\nHozircha: {k}/{n}\nOdamlar shu havola orqali kanalga qo'shilishi va kanalda qolishi kerak.",
         "unlocked": "🎉 Tabriklaymiz! {n} ta odam qo'shildi. Endi e'lon berishingiz mumkin.",
         "progress": "👥 Yangi a'zo qo'shildi: {k}/{n}",
@@ -70,7 +71,7 @@ T = {
         "lang_prompt": "Tilni tanlang / Выберите язык",
         "welcome": "Здравствуйте! 👋\nЗдесь можно подать объявление. Пользуйтесь кнопками ниже.",
         "btn_new": "➕ Подать объявление", "btn_my": "📋 Мои объявления", "btn_link": "🔗 Моя ссылка", "btn_lang": "🌐 Til / Язык",
-        "btn_cancel": "❌ Отмена", "btn_done": "✅ Готово", "btn_phone": "📞 Отправить номер",
+        "btn_share": "📤 Отправить друзьям", "btn_cancel": "❌ Отмена", "btn_done": "✅ Готово", "btn_phone": "📞 Отправить номер",
         "locked": "🔒 Чтобы подать объявление, пригласите в канал {n} человек.\n\nВаша ссылка:\n{link}\n\nПока: {k}/{n}\nЛюди должны вступить в канал по этой ссылке и остаться в нём.",
         "unlocked": "🎉 Поздравляем! Вступили {n} человек. Теперь можно подавать объявления.",
         "progress": "👥 Новый участник: {k}/{n}",
@@ -204,6 +205,16 @@ def say(uid, key, kb=None, **kw):
     if kb:
         p["reply_markup"] = kb
     return api("sendMessage", **p)
+
+
+def share_url(link, text):
+    """Telegram'ning kontaktlarni tanlash oynasini ochadigan havola (bir nechta chatni belgilash mumkin)."""
+    return "https://t.me/share/url?url=" + quote(link, safe="") + "&text=" + quote(text, safe="")
+
+
+def share_kb(uid, link):
+    text = "Oldi sotdi — oldi-sotdi e'lonlari kanali / Канал объявлений Oldi sotdi"
+    return {"inline_keyboard": [[{"text": tr(uid, "btn_share"), "url": share_url(link, text)}]]}
 
 
 def all_labels(key):
@@ -525,12 +536,14 @@ def on_message(m):
     if text in all_labels("btn_new"):
         if not can_post(uid):
             k = len(valid_invited(uid))
-            return say(uid, "locked", kb=menu_kb(uid), n=NEED, k=k, link=make_link(uid))
+            lk = make_link(uid)
+            return say(uid, "locked", kb=share_kb(uid, lk), n=NEED, k=k, link=lk)
         return start_draft(uid)
     if text in all_labels("btn_my"):
         return show_my(uid)
     if text in all_labels("btn_link"):
-        return say(uid, "link_msg", kb=menu_kb(uid), link=make_link(uid), k=len(valid_invited(uid)), n=NEED)
+        lk = make_link(uid)
+        return say(uid, "link_msg", kb=share_kb(uid, lk), link=lk, k=len(valid_invited(uid)), n=NEED)
     if text in all_labels("btn_lang"):
         u["lang"] = None
         return api("sendMessage", chat_id=int(uid), text=T["uz"]["lang_prompt"],
@@ -549,7 +562,9 @@ def post_welcome(uid):
             "📝 Чтобы подать объявление, нажмите кнопку ниже и заполните форму в боте.\n"
             "💬 Вопросы можно писать в комментариях под постом.")
     r = api("sendMessage", chat_id=CHANNEL, text=text, parse_mode="HTML", disable_web_page_preview=True,
-            reply_markup={"inline_keyboard": [[{"text": "➕ E'lon berish / Подать объявление", "url": bot_url}]]})
+            reply_markup={"inline_keyboard": [[{"text": "➕ E'lon berish / Подать объявление", "url": bot_url}],
+                                          [{"text": "📤 Do'stlarga yuborish / Отправить друзьям",
+                                            "url": share_url(CHANNEL_LINK, "Oldi sotdi — oldi-sotdi e'lonlari kanali / Канал объявлений Oldi sotdi")}]]})
     if r and r.get("message_id"):
         api("pinChatMessage", chat_id=CHANNEL, message_id=r["message_id"], disable_notification=True)
         api("sendMessage", chat_id=int(uid), text="✅ Приветственный пост опубликован и закреплён в канале.")
