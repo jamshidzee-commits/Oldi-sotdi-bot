@@ -19,6 +19,7 @@ PASS_HOURS = 24                                       # paket necha soat amal qi
 MAX_PHOTOS = 5
 LOGO = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo.jpg")
 BOT_USER = os.environ.get("BOT_USERNAME") or "Oldisotdichennel_bot"
+SELL_MARKUP = {"inline_keyboard": [[{"text": "➕ E'lon berish / Подать объявление", "url": f"https://t.me/{BOT_USER}"}]]}
 SELL_LINE = f'➕ <a href="https://t.me/{BOT_USER}">E\'lon berish / Подать объявление</a>'
 RUN_SECONDS = int(os.environ.get("RUN_SECONDS") or 55 * 60)
 STATE = os.environ.get("STATE_FILE") or "state.json"
@@ -496,11 +497,13 @@ def submit_ad(uid, m, phone):
         send_invite(uid, lk)
 
 
-def send_media(chat, items, caption=None):
+def send_media(chat, items, caption=None, markup=None):
     """Bitta fayl bo'lsa sendPhoto/sendVideo, bir nechta bo'lsa albom. Xabar id'lari ro'yxatini qaytaradi."""
     kw = {"caption": caption, "parse_mode": "HTML"} if caption else {}
     if len(items) == 1:
         x = items[0]
+        if markup:  # tugma faqat bitta fayldan iborat postga qo'yiladi (albomga Telegram ruxsat bermaydi)
+            kw["reply_markup"] = markup
         r = api("sendPhoto" if x["t"] == "photo" else "sendVideo", chat_id=chat, **{x["t"]: x["f"]}, **kw)
         return [r["message_id"]] if r else []
     media = [{"type": x["t"], "media": x["f"]} for x in items]
@@ -531,7 +534,7 @@ def publish(aid):
         return False
     phone = FERNET.decrypt(ad["phone_enc"].encode()).decode()
     cap = build_caption(ad, phone)
-    ids = send_media(CHANNEL, ad["photos"], cap)
+    ids = send_media(CHANNEL, ad["photos"], cap, SELL_MARKUP)
     if not ids:
         return False
     ad["chan_ids"] = ids
@@ -561,7 +564,7 @@ def mark_sold(aid, uid):
         return False
     cap = build_caption(ad, sold=True)
     api("editMessageCaption", chat_id=CHANNEL, message_id=ad["chan_ids"][0], caption=cap, parse_mode="HTML",
-        reply_markup={"inline_keyboard": []})
+        reply_markup=SELL_MARKUP if len(ad["chan_ids"]) == 1 else {"inline_keyboard": []})
     g = ad.get("group")  # muhokama guruhidagi nusxa (imkon bo'lsa)
     if g:
         api("editMessageCaption", chat_id=g["chat"], message_id=g["msg"], caption=cap, parse_mode="HTML")
@@ -661,7 +664,8 @@ def ad_phone(ad):
 def refresh_live(aid):
     ad = S["ads"][aid]
     cap = build_caption(ad, ad_phone(ad))
-    api("editMessageCaption", chat_id=CHANNEL, message_id=ad["chan_ids"][0], caption=cap, parse_mode="HTML")
+    kw = {"reply_markup": SELL_MARKUP} if len(ad["chan_ids"]) == 1 else {}
+    api("editMessageCaption", chat_id=CHANNEL, message_id=ad["chan_ids"][0], caption=cap, parse_mode="HTML", **kw)
     g = ad.get("group")
     if g:
         api("editMessageCaption", chat_id=g["chat"], message_id=g["msg"], caption=cap, parse_mode="HTML")
