@@ -66,6 +66,7 @@ T = {
         "cancelled": "Bekor qilindi.",
         "lang_set": "Til o'rnatildi.",
         "sold_label": "✅ SOTILDI",
+        "fwd_hint": "👇 Bir nechta do'stga birdaniga yuborish: pastdagi xabarni bosib turing → «Переслать» → kerakli chatlarni belgilang → yuboring.",
     },
     "ru": {
         "lang_prompt": "Tilni tanlang / Выберите язык",
@@ -99,6 +100,7 @@ T = {
         "cancelled": "Отменено.",
         "lang_set": "Язык установлен.",
         "sold_label": "✅ ПРОДАНО",
+        "fwd_hint": "👇 Чтобы отправить сразу нескольким друзьям: зажмите сообщение ниже → «Переслать» → отметьте нужные чаты → отправьте.",
     },
 }
 
@@ -215,6 +217,13 @@ def share_url(link, text):
 def share_kb(uid, link):
     text = "Oldi sotdi — oldi-sotdi e'lonlari kanali / Канал объявлений Oldi sotdi"
     return {"inline_keyboard": [[{"text": tr(uid, "btn_share"), "url": share_url(link, text)}]]}
+
+
+def send_invite(uid, link):
+    """Do'stlarga bir yo'la forward qilish uchun tayyor taklif xabari (ssilka + matn)."""
+    say(uid, "fwd_hint")
+    api("sendMessage", chat_id=int(uid), disable_web_page_preview=True,
+        text=f"🛍 OLDI SOTDI — oldi-sotdi e'lonlari kanali!\nКанал объявлений: купля-продажа.\n\n👉 {link}")
 
 
 def all_labels(key):
@@ -537,13 +546,15 @@ def on_message(m):
         if not can_post(uid):
             k = len(valid_invited(uid))
             lk = make_link(uid)
-            return say(uid, "locked", kb=share_kb(uid, lk), n=NEED, k=k, link=lk)
+            say(uid, "locked", kb=share_kb(uid, lk), n=NEED, k=k, link=lk)
+            return send_invite(uid, lk)
         return start_draft(uid)
     if text in all_labels("btn_my"):
         return show_my(uid)
     if text in all_labels("btn_link"):
         lk = make_link(uid)
-        return say(uid, "link_msg", kb=share_kb(uid, lk), link=lk, k=len(valid_invited(uid)), n=NEED)
+        say(uid, "link_msg", kb=share_kb(uid, lk), link=lk, k=len(valid_invited(uid)), n=NEED)
+        return send_invite(uid, lk)
     if text in all_labels("btn_lang"):
         u["lang"] = None
         return api("sendMessage", chat_id=int(uid), text=T["uz"]["lang_prompt"],
