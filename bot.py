@@ -268,7 +268,6 @@ def send_logo(chat, caption, markup=None):
 
 def send_invite(uid, link):
     """Do'stlarga bir yo'la forward qilish uchun tayyor taklif xabari (ssilka + matn)."""
-    say(uid, "fwd_hint")
     text = (f"🛍 <b>OLDI SOTDI</b> — oldi-sotdi e'lonlari kanali!\n✅ Sotib oling, soting, e'lon bering.\n\n"
             f"Канал объявлений: купля-продажа. Подписывайтесь 👇\n\n👉 {link}")
     if not send_logo(int(uid), text):  # logotip yuborilmasa, oddiy matn (havola ko'rinishi bilan)
@@ -470,7 +469,7 @@ def submit_ad(uid, m, phone):
         send_to_admin(aid, ad, phone, m["from"])
     else:  # taklif qilish kerak: e'lon saqlanadi, 5 kishi qo'shilgach adminga ketadi
         lk = make_link(uid)
-        say(uid, "saved_waiting", kb=share_kb(uid, lk), n=NEED, k=len(valid_invited(uid)), link=lk)
+        say(uid, "saved_waiting", kb=menu_kb(uid), n=NEED, k=len(valid_invited(uid)), link=lk)  # menyuni qaytaradi
         send_invite(uid, lk)
 
 
