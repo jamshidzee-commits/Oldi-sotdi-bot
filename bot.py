@@ -147,7 +147,7 @@ def api(method, **params):
 
 # ---------------------------------------------------------------- holat
 def new_state():
-    return {"offset": 0, "next_id": 1, "admin": None, "users": {}, "ads": {}, "drafts": {}, "edit": {}, "links": {}, "admin_wait": None}
+    return {"offset": 0, "next_id": 1, "admin": None, "users": {}, "ads": {}, "drafts": {}, "edit": {}, "credited": {}, "links": {}, "admin_wait": None}
 
 
 def load():
@@ -337,6 +337,10 @@ def on_chat_member(cm):
     inviter = S["links"].get(link or "")
     if not inviter or inviter == str(joined["id"]):
         return
+    # bir odam faqat bitta taklif qiluvchiga yoziladi (birinchi kirgan havolasi)
+    if str(joined["id"]) in S["credited"]:
+        return
+    S["credited"][str(joined["id"])] = inviter
     u = user(inviter)
     if str(joined["id"]) not in u["invited"]:
         u["invited"].append(str(joined["id"]))
