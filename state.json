@@ -1,5 +1,5 @@
 {
- "offset": 422275256,
+ "offset": 422275257,
  "next_id": 3,
  "admin": "339489226",
  "users": {
@@ -26,7 +26,13 @@
    "unlocked": false,
    "ads_ts": [
     1795719252.225169
-   ]
+   ],
+   "used_inv": [],
+   "pass_until": 0,
+   "pass_used": 0,
+   "uname": "Jimmyjim1212",
+   "fname": "Jimmy",
+   "vip": true
   }
  },
  "ads": {
@@ -112,7 +118,5 @@
  },
  "admin_wait": null,
  "logo_id": "AgACAgIAAxkDAANDawh8ES7Atw1N4nWypgNqxQOmFyIAAuEjaxvr5EFI8Cy17f1dem4BAAMCAAN5AAM9BA",
- "vip_codes": {
-  "xQ4zeKTF": true
- }
+ "vip_codes": {}
 }
