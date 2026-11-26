@@ -16,6 +16,7 @@ CHANNEL_LINK = "https://t.me/" + CHANNEL.lstrip("@") if CHANNEL.startswith("@") 
 NEED = int(os.environ.get("INVITES_NEEDED") or 5)
 DAILY_LIMIT = int(os.environ.get("DAILY_LIMIT") or 3)
 MAX_PHOTOS = 5
+LOGO = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo.jpg")
 BOT_USER = os.environ.get("BOT_USERNAME") or "Oldisotdichennel_bot"
 SELL_LINE = f'➕ <a href="https://t.me/{BOT_USER}">E\'lon berish / Подать объявление</a>'
 RUN_SECONDS = int(os.environ.get("RUN_SECONDS") or 55 * 60)
@@ -219,14 +220,44 @@ def share_kb(uid, link):
     return {"inline_keyboard": [[{"text": tr(uid, "btn_share"), "url": share_url(link, text)}]]}
 
 
+def upload_photo(chat, caption, markup=None):
+    """Logotipni birinchi marta fayl sifatida yuboradi."""
+    data = {"chat_id": str(chat), "caption": caption, "parse_mode": "HTML"}
+    if markup:
+        data["reply_markup"] = json.dumps(markup)
+    try:
+        with open(LOGO, "rb") as f:
+            d = requests.post(TG + "sendPhoto", data=data, files={"photo": f}, timeout=90).json()
+    except Exception as ex:
+        print("logo yuborilmadi", ex)
+        return None
+    return d["result"] if d.get("ok") else None
+
+
+def send_logo(chat, caption, markup=None):
+    """Kanal logotipi + matn. file_id saqlanadi, keyingi safar fayl qayta yuklanmaydi. Muvaffaqiyatsiz bo'lsa None."""
+    fid = S.get("logo_id")
+    r = None
+    if fid:
+        p = {"chat_id": chat, "photo": fid, "caption": caption, "parse_mode": "HTML"}
+        if markup:
+            p["reply_markup"] = markup
+        r = api("sendPhoto", **p)
+    if not r:
+        r = upload_photo(chat, caption, markup)
+        if r and r.get("photo"):
+            S["logo_id"] = r["photo"][-1]["file_id"]
+    return r
+
+
 def send_invite(uid, link):
     """Do'stlarga bir yo'la forward qilish uchun tayyor taklif xabari (ssilka + matn)."""
     say(uid, "fwd_hint")
-    # Havola ko'rinishi (kanal avatari, nomi, "Qo'shilish" tugmasi) Telegram'da avtomatik chiqadi
-    api("sendMessage", chat_id=int(uid),
-        text=f"🛍 OLDI SOTDI — oldi-sotdi e'lonlari kanali!\n✅ Sotib oling, soting, e'lon bering.\n\n"
-             f"Канал объявлений: купля-продажа. Подписывайтесь 👇\n\n👉 {link}",
-        link_preview_options={"url": link, "prefer_large_media": True})
+    text = (f"🛍 <b>OLDI SOTDI</b> — oldi-sotdi e'lonlari kanali!\n✅ Sotib oling, soting, e'lon bering.\n\n"
+            f"Канал объявлений: купля-продажа. Подписывайтесь 👇\n\n👉 {link}")
+    if not send_logo(int(uid), text):  # logotip yuborilmasa, oddiy matn (havola ko'rinishi bilan)
+        api("sendMessage", chat_id=int(uid), text=text, parse_mode="HTML",
+            link_preview_options={"url": link, "prefer_large_media": True})
 
 
 def all_labels(key):
@@ -575,10 +606,11 @@ def post_welcome(uid):
             "💬 Savollaringiz bo'lsa, post ostida izoh qoldiring.\n\n"
             "📝 Чтобы подать объявление, нажмите кнопку ниже и заполните форму в боте.\n"
             "💬 Вопросы можно писать в комментариях под постом.")
-    r = api("sendMessage", chat_id=CHANNEL, text=text, parse_mode="HTML", disable_web_page_preview=True,
-            reply_markup={"inline_keyboard": [[{"text": "➕ E'lon berish / Подать объявление", "url": bot_url}],
-                                          [{"text": "📤 Do'stlarga yuborish / Отправить друзьям",
-                                            "url": share_url(CHANNEL_LINK, "Oldi sotdi — oldi-sotdi e'lonlari kanali / Канал объявлений Oldi sotdi")}]]})
+    markup = {"inline_keyboard": [[{"text": "➕ E'lon berish / Подать объявление", "url": bot_url}],
+                                  [{"text": "📤 Do'stlarga yuborish / Отправить друзьям",
+                                    "url": share_url(CHANNEL_LINK, "Oldi sotdi — oldi-sotdi e'lonlari kanali / Канал объявлений Oldi sotdi")}]]}
+    r = send_logo(CHANNEL, text, markup) or api("sendMessage", chat_id=CHANNEL, text=text, parse_mode="HTML",
+                                                disable_web_page_preview=True, reply_markup=markup)
     if r and r.get("message_id"):
         api("pinChatMessage", chat_id=CHANNEL, message_id=r["message_id"], disable_notification=True)
         api("sendMessage", chat_id=int(uid), text="✅ Приветственный пост опубликован и закреплён в канале.")
