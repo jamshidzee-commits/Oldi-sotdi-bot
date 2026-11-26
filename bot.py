@@ -45,9 +45,9 @@ T = {
         "ask_price": "Narxini yozing (masalan: 5 000 000 so'm yoki kelishiladi).",
         "ask_addr": "Manzilni yozing (shahar, tuman, ko'cha).",
         "ask_land": "Mo'ljalni yozing (masalan: bozor yonida).",
-        "ask_photo": "Rasm yuboring (1 tadan {m} tagacha). Tugagach «✅ Tayyor» tugmasini bosing.",
-        "photo_ok": "Rasm qabul qilindi: {k}/{m}",
-        "need_photo": "Kamida 1 ta rasm yuboring.",
+        "ask_photo": "Rasm yoki video yuboring (jami {m} tagacha). Tugagach «✅ Tayyor» tugmasini bosing.",
+        "photo_ok": "Qabul qilindi: {k}/{m}",
+        "need_photo": "Kamida 1 ta rasm yoki video yuboring.",
         "ask_phone": "Oxirgi qadam: telefon raqamingizni Telegram orqali tasdiqlang. Pastdagi tugmani bosing. Qo'lda yozilgan raqam qabul qilinmaydi.",
         "bad_contact": "Faqat o'zingizning raqamingizni yuborishingiz mumkin. Pastdagi tugmani bosing.",
         "too_long": "Juda uzun matn. Qisqaroq yozing (eng ko'pi {m} belgi).",
@@ -78,9 +78,9 @@ T = {
         "ask_price": "Напишите цену (например: 5 000 000 сум или договорная).",
         "ask_addr": "Напишите адрес (город, район, улица).",
         "ask_land": "Напишите ориентир (например: возле рынка).",
-        "ask_photo": "Отправьте фото (от 1 до {m}). Когда закончите, нажмите «✅ Готово».",
-        "photo_ok": "Фото принято: {k}/{m}",
-        "need_photo": "Отправьте хотя бы 1 фото.",
+        "ask_photo": "Отправьте фото или видео (всего до {m}). Когда закончите, нажмите «✅ Готово».",
+        "photo_ok": "Принято: {k}/{m}",
+        "need_photo": "Отправьте хотя бы 1 фото или видео.",
         "ask_phone": "Последний шаг: подтвердите номер телефона через Telegram. Нажмите кнопку ниже. Номер, написанный вручную, не принимается.",
         "bad_contact": "Можно отправить только свой номер. Нажмите кнопку ниже.",
         "too_long": "Слишком длинный текст. Напишите короче (не больше {m} символов).",
@@ -338,9 +338,10 @@ def draft_message(uid, m):
     if step == "cat":
         return say(uid, "ask_cat", kb=cat_kb(uid))
     if step == "photos":
-        if m.get("photo"):
+        if m.get("photo") or m.get("video"):
             if len(d["photos"]) < MAX_PHOTOS:
-                d["photos"].append(m["photo"][-1]["file_id"])
+                d["photos"].append({"t": "photo", "f": m["photo"][-1]["file_id"]} if m.get("photo")
+                                   else {"t": "video", "f": m["video"]["file_id"]})
             return say(uid, "photo_ok", k=len(d["photos"]), m=MAX_PHOTOS)
         if text in all_labels("btn_done"):
             if not d["photos"]:
@@ -374,15 +375,25 @@ def submit_ad(uid, m, phone):
     send_to_admin(aid, ad, phone, m["from"])
 
 
+def send_media(chat, items, caption=None):
+    """Bitta fayl bo'lsa sendPhoto/sendVideo, bir nechta bo'lsa albom. Xabar id'lari ro'yxatini qaytaradi."""
+    kw = {"caption": caption, "parse_mode": "HTML"} if caption else {}
+    if len(items) == 1:
+        x = items[0]
+        r = api("sendPhoto" if x["t"] == "photo" else "sendVideo", chat_id=chat, **{x["t"]: x["f"]}, **kw)
+        return [r["message_id"]] if r else []
+    media = [{"type": x["t"], "media": x["f"]} for x in items]
+    media[0].update(kw)
+    r = api("sendMediaGroup", chat_id=chat, media=media)
+    return [x["message_id"] for x in r] if r else []
+
+
 def send_to_admin(aid, ad, phone, frm):
     adm = S.get("admin")
     if not adm:
         print("admin topilmadi")
         return
-    if len(ad["photos"]) == 1:
-        api("sendPhoto", chat_id=int(adm), photo=ad["photos"][0])
-    else:
-        api("sendMediaGroup", chat_id=int(adm), media=[{"type": "photo", "media": f} for f in ad["photos"]])
+    send_media(int(adm), ad["photos"])
     who = f'<a href="tg://user?id={frm["id"]}">{e(frm.get("first_name") or "user")}</a>'
     if frm.get("username"):
         who += f" (@{e(frm['username'])})"
@@ -399,15 +410,7 @@ def publish(aid):
         return False
     phone = FERNET.decrypt(ad["phone_enc"].encode()).decode()
     cap = build_caption(ad, phone)
-    ids = []
-    if len(ad["photos"]) == 1:
-        r = api("sendPhoto", chat_id=CHANNEL, photo=ad["photos"][0], caption=cap, parse_mode="HTML")
-        ids = [r["message_id"]] if r else []
-    else:
-        media = [{"type": "photo", "media": f} for f in ad["photos"]]
-        media[0].update({"caption": cap, "parse_mode": "HTML"})
-        r = api("sendMediaGroup", chat_id=CHANNEL, media=media)
-        ids = [x["message_id"] for x in r] if r else []
+    ids = send_media(CHANNEL, ad["photos"], cap)
     if not ids:
         return False
     ad["chan_ids"] = ids
