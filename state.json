@@ -1,5 +1,5 @@
 {
- "offset": 422275335,
+ "offset": 422275339,
  "next_id": 5,
  "admin": "339489226",
  "users": {
@@ -226,10 +226,13 @@
  },
  "drafts": {
   "6908278807": {
-   "step": "price",
+   "step": "photos",
    "photos": [],
    "title": "Ар",
-   "cat": "estate"
+   "cat": "estate",
+   "price": "500",
+   "addr": "Ардштт",
+   "land": "Арошдь"
   }
  },
  "edit": {},
