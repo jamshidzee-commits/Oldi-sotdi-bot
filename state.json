@@ -1,5 +1,5 @@
 {
- "offset": 422275304,
+ "offset": 422275306,
  "next_id": 4,
  "admin": "339489226",
  "users": {
@@ -122,10 +122,9 @@
      "f": "BAACAgIAAxkBAANgawiARqWP_D0XpiJW3WyCZBG8bu8AAumyAALr5EFIWrp0uvi3zyA9BA"
     }
    ],
-   "status": "live",
+   "status": "sold",
    "ts": 1795719252,
    "fname": "Jimmy",
-   "phone_enc": "gAAAAABrCIBUjZBSQ233GW_SRJ99Ei6gRgMvVtdMpxHNJeLBKt41rJNrVhhtjxAzRds6gy-T3nKkMPHXTj-WFHB0w8JhMC_YJQ==",
    "chan_ids": [
     18,
     19,
