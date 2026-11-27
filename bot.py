@@ -722,6 +722,9 @@ def on_message(m):
         return
     uid = str(m["from"]["id"])
     text = (m.get("text") or "").strip()
+    if text.startswith("/"):  # "/welcome@bot", "/Welcome " -> "/welcome"
+        head, _, rest = text.partition(" ")
+        text = (head.split("@")[0].lower() + (" " + rest.strip() if rest.strip() else "")).strip()
     u = user(uid)
     u["uname"] = m["from"].get("username") or ""
     u["fname"] = m["from"].get("first_name") or ""
