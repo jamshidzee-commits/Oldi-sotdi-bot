@@ -1,5 +1,5 @@
 {
- "offset": 422275346,
+ "offset": 422275347,
  "next_id": 5,
  "admin": "339489226",
  "users": {
@@ -224,12 +224,7 @@
    "group": null
   }
  },
- "drafts": {
-  "6908278807": {
-   "step": "title",
-   "photos": []
-  }
- },
+ "drafts": {},
  "edit": {},
  "credited": {
   "5757531047": "6908278807",
