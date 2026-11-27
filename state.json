@@ -1,5 +1,5 @@
 {
- "offset": 422275317,
+ "offset": 422275322,
  "next_id": 4,
  "admin": "339489226",
  "users": {
@@ -180,7 +180,16 @@
    }
   }
  },
- "drafts": {},
+ "drafts": {
+  "6908278807": {
+   "step": "land",
+   "photos": [],
+   "title": "3 хонали кв,",
+   "cat": "estate",
+   "price": "50000$",
+   "addr": "Samarqand kucha"
+  }
+ },
  "edit": {},
  "credited": {
   "5757531047": "6908278807",
