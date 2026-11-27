@@ -1,5 +1,5 @@
 {
- "offset": 422275280,
+ "offset": 422275286,
  "next_id": 3,
  "admin": "339489226",
  "users": {
@@ -126,11 +126,30 @@
  },
  "drafts": {
   "6908278807": {
-   "step": "addr",
-   "photos": [],
+   "step": "photos",
+   "photos": [
+    {
+     "t": "photo",
+     "f": "AgACAgIAAxkBAAOkawj6_a6GizZAp2JyBV0iGP4dTv0AApQiaxvr5ElIeBsUoc_wrI0BAAMCAAN5AAM9BA"
+    },
+    {
+     "t": "photo",
+     "f": "AgACAgIAAxkBAAOlawj6_YIJiVq9TSAi0AwYxYpE88gAApUiaxvr5ElIgObj6qAmylEBAAMCAAN5AAM9BA"
+    },
+    {
+     "t": "photo",
+     "f": "AgACAgIAAxkBAAOmawj6_bFas8mcLRfEM6k0vm4vMAADliJrG-vkSUh_7FpF0kuqpgEAAwIAA3kAAz0E"
+    },
+    {
+     "t": "video",
+     "f": "BAACAgIAAxkBAAOnawj6_U52eAdWewNU9ld2mPOvY-4AAsakAALr5ElICaPreai9nHA9BA"
+    }
+   ],
    "title": "Кобальт магнитола, блютузи бор, кам ишлатилган",
    "cat": "electro",
-   "price": "500000 сум"
+   "price": "500000 сум",
+   "addr": "Янгийўл шахар, массив Анаркулов томондаги махалла",
+   "land": "Янги домлар рўпарасидаги махалла"
   }
  },
  "edit": {},
