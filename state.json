@@ -1,6 +1,6 @@
 {
- "offset": 422275328,
- "next_id": 4,
+ "offset": 422275330,
+ "next_id": 5,
  "admin": "339489226",
  "users": {
   "339489226": {
@@ -39,7 +39,7 @@
    ],
    "used_inv": [],
    "pass_until": 1795809461.4606953,
-   "pass_used": 2,
+   "pass_used": 3,
    "uname": "Jimmyjim1212",
    "fname": "Jimmy",
    "vip": true
@@ -178,11 +178,15 @@
     "chat": -1005726577808,
     "msg": 16
    }
-  }
- },
- "drafts": {
-  "6908278807": {
-   "step": "photos",
+  },
+  "4": {
+   "uid": "6908278807",
+   "uname": "Jimmyjim1212",
+   "title": "3 хонали кв,",
+   "cat": "estate",
+   "price": "50000$",
+   "addr": "Samarqand kucha",
+   "land": "Kurand yonida",
    "photos": [
     {
      "t": "photo",
@@ -205,13 +209,15 @@
      "f": "AgACAgIAAxkBAAPUawmjOsjbVbTP9hFI0p6h67zy30sAAvQjaxvr5FFIXVNz2rfOzZEBAAMCAAN5AAM9BA"
     }
    ],
-   "title": "3 хонали кв,",
-   "cat": "estate",
-   "price": "50000$",
-   "addr": "Samarqand kucha",
-   "land": "Kurand yonida"
+   "status": "pending",
+   "ts": 1795793739,
+   "fname": "Jimmy",
+   "phone_enc": "gAAAAABrCaNL9enar_23_xgrw14GknGgrI00tV7r-9EXEggmD7hdb_yZjtgQtZkuuOBbqc6hZHJ9ZYF2eHa2l2X8L5yjNrvsVQ==",
+   "chan_ids": [],
+   "group": null
   }
  },
+ "drafts": {},
  "edit": {},
  "credited": {
   "5757531047": "6908278807",
