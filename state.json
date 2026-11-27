@@ -1,5 +1,5 @@
 {
- "offset": 422275322,
+ "offset": 422275328,
  "next_id": 4,
  "admin": "339489226",
  "users": {
@@ -182,12 +182,34 @@
  },
  "drafts": {
   "6908278807": {
-   "step": "land",
-   "photos": [],
+   "step": "photos",
+   "photos": [
+    {
+     "t": "photo",
+     "f": "AgACAgIAAxkBAAPQawmjOuFCgKkXc2miPjsJex3MUnoAAvEjaxvr5FFIbv1dgp4dlncBAAMCAAN5AAM9BA"
+    },
+    {
+     "t": "photo",
+     "f": "AgACAgIAAxkBAAPRawmjOiHQGERmVzRfvstBoWhs_kAAAvIjaxvr5FFIOF-f8OS66-0BAAMCAAN5AAM9BA"
+    },
+    {
+     "t": "photo",
+     "f": "AgACAgIAAxkBAAPSawmjOhbuQyj8L035FQ_4rW-Ss-UAAvMjaxvr5FFIs3K_n0tBaZwBAAMCAAN5AAM9BA"
+    },
+    {
+     "t": "video",
+     "f": "BAACAgIAAxkBAAOnawj6_U52eAdWewNU9ld2mPOvY-4AAsakAALr5ElICaPreai9nHA9BA"
+    },
+    {
+     "t": "photo",
+     "f": "AgACAgIAAxkBAAPUawmjOsjbVbTP9hFI0p6h67zy30sAAvQjaxvr5FFIXVNz2rfOzZEBAAMCAAN5AAM9BA"
+    }
+   ],
    "title": "3 хонали кв,",
    "cat": "estate",
    "price": "50000$",
-   "addr": "Samarqand kucha"
+   "addr": "Samarqand kucha",
+   "land": "Kurand yonida"
   }
  },
  "edit": {},
