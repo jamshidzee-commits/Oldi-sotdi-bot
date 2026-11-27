@@ -1,5 +1,5 @@
 {
- "offset": 422275288,
+ "offset": 422275293,
  "next_id": 4,
  "admin": "339489226",
  "users": {
@@ -149,12 +149,20 @@
      "f": "BAACAgIAAxkBAAOnawj6_U52eAdWewNU9ld2mPOvY-4AAsakAALr5ElICaPreai9nHA9BA"
     }
    ],
-   "status": "pending",
+   "status": "live",
    "ts": 1795750668,
    "fname": "Jimmy",
    "phone_enc": "gAAAAABrCPsMiOYLSeAMJ7joARmsFnzm1gFOZ3X9v4bGxan0iWPMF6bbk1dyYKW6veTrYdNYV_RPRaqV_-VgwHhVocJQv_R0tg==",
-   "chan_ids": [],
-   "group": null
+   "chan_ids": [
+    23,
+    24,
+    25,
+    26
+   ],
+   "group": {
+    "chat": -1005726577808,
+    "msg": 16
+   }
   }
  },
  "drafts": {},
