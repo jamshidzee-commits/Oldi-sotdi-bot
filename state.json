@@ -1,5 +1,5 @@
 {
- "offset": 422275299,
+ "offset": 422275301,
  "next_id": 4,
  "admin": "339489226",
  "users": {
@@ -41,6 +41,17 @@
    "uname": "Jimmyjim1212",
    "fname": "Jimmy",
    "vip": true
+  },
+  "498230130": {
+   "lang": "uz",
+   "link": null,
+   "invited": [],
+   "unlocked": false,
+   "used_inv": [],
+   "pass_until": 0,
+   "pass_used": 0,
+   "uname": "NodirAminjanov",
+   "fname": "Nodir"
   }
  },
  "ads": {
