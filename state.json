@@ -1,5 +1,5 @@
 {
- "offset": 422275332,
+ "offset": 422275335,
  "next_id": 5,
  "admin": "339489226",
  "users": {
@@ -224,7 +224,14 @@
    "group": null
   }
  },
- "drafts": {},
+ "drafts": {
+  "6908278807": {
+   "step": "price",
+   "photos": [],
+   "title": "Ар",
+   "cat": "estate"
+  }
+ },
  "edit": {},
  "credited": {
   "5757531047": "6908278807",
