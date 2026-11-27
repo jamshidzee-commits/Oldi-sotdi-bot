@@ -1,6 +1,6 @@
 {
- "offset": 422275286,
- "next_id": 3,
+ "offset": 422275288,
+ "next_id": 4,
  "admin": "339489226",
  "users": {
   "339489226": {
@@ -34,7 +34,7 @@
    ],
    "used_inv": [],
    "pass_until": 1795809461.4606953,
-   "pass_used": 1,
+   "pass_used": 2,
    "uname": "Jimmyjim1212",
    "fname": "Jimmy",
    "vip": true
@@ -122,11 +122,15 @@
     "chat": -1005726577808,
     "msg": 11
    }
-  }
- },
- "drafts": {
-  "6908278807": {
-   "step": "photos",
+  },
+  "3": {
+   "uid": "6908278807",
+   "uname": "Jimmyjim1212",
+   "title": "Кобальт магнитола, блютузи бор, кам ишлатилган",
+   "cat": "electro",
+   "price": "500000 сум",
+   "addr": "Янгийўл шахар, массив Анаркулов томондаги махалла",
+   "land": "Янги домлар рўпарасидаги махалла",
    "photos": [
     {
      "t": "photo",
@@ -145,13 +149,15 @@
      "f": "BAACAgIAAxkBAAOnawj6_U52eAdWewNU9ld2mPOvY-4AAsakAALr5ElICaPreai9nHA9BA"
     }
    ],
-   "title": "Кобальт магнитола, блютузи бор, кам ишлатилган",
-   "cat": "electro",
-   "price": "500000 сум",
-   "addr": "Янгийўл шахар, массив Анаркулов томондаги махалла",
-   "land": "Янги домлар рўпарасидаги махалла"
+   "status": "pending",
+   "ts": 1795750668,
+   "fname": "Jimmy",
+   "phone_enc": "gAAAAABrCPsMiOYLSeAMJ7joARmsFnzm1gFOZ3X9v4bGxan0iWPMF6bbk1dyYKW6veTrYdNYV_RPRaqV_-VgwHhVocJQv_R0tg==",
+   "chan_ids": [],
+   "group": null
   }
  },
+ "drafts": {},
  "edit": {},
  "credited": {
   "5757531047": "6908278807",
