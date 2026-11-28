@@ -1,5 +1,5 @@
 {
- "offset": 422275499,
+ "offset": 422275501,
  "next_id": 6,
  "admin": "339489226",
  "users": {
@@ -291,11 +291,13 @@
    "photos": []
   },
   "38234907": {
-   "step": "addr",
+   "step": "photos",
    "photos": [],
    "title": "Planshet Samsung Tab 17",
    "cat": "electro",
-   "price": "15000000"
+   "price": "15000000",
+   "addr": "Yangiyol",
+   "land": "Niyozbosh"
   }
  },
  "edit": {},
