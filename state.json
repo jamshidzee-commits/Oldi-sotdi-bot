@@ -1,5 +1,5 @@
 {
- "offset": 422275377,
+ "offset": 422275379,
  "next_id": 6,
  "admin": "339489226",
  "users": {
@@ -49,7 +49,8 @@
    "pass_used": 1,
    "uname": "Jimmyjim1212",
    "fname": "Jimmy",
-   "vip": true
+   "vip": true,
+   "guide_seen": true
   },
   "498230130": {
    "lang": "uz",
@@ -261,7 +262,12 @@
    "group": null
   }
  },
- "drafts": {},
+ "drafts": {
+  "6908278807": {
+   "step": "title",
+   "photos": []
+  }
+ },
  "edit": {},
  "credited": {
   "5757531047": "6908278807",
@@ -281,5 +287,6 @@
  },
  "admin_wait": "5",
  "logo_id": "AgACAgIAAxkDAANDawh8ES7Atw1N4nWypgNqxQOmFyIAAuEjaxvr5EFI8Cy17f1dem4BAAMCAAN5AAM9BA",
- "vip_codes": {}
+ "vip_codes": {},
+ "guide_id": "BAACAgIAAxkDAAIBQWsKmIOsXwqxUcMKrk9wXqF027a4AAKUrQACsXRYSBwRyMJL3NFcPQQ"
 }
