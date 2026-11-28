@@ -274,6 +274,37 @@ def send_logo(chat, caption, markup=None):
     return r
 
 
+GUIDE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "guide.mp4")
+GUIDE_CAP = ("🎬 <b>Qanday e'lon berish / Как подать объявление</b>\n"
+             "1-2 daqiqa: nom → narx → manzil → foto/video → raqam (Telegram orqali).\n"
+             "1–2 минуты: название → цена → адрес → фото/видео → номер (через Telegram).")
+
+
+def upload_video(chat, caption):
+    try:
+        with open(GUIDE, "rb") as f:
+            d = requests.post(TG + "sendVideo", data={"chat_id": str(chat), "caption": caption, "parse_mode": "HTML",
+                                                      "supports_streaming": "true"}, files={"video": f}, timeout=180).json()
+    except Exception as ex:
+        print("qo'llanma yuborilmadi", ex)
+        return None
+    return d["result"] if d.get("ok") else None
+
+
+def send_guide(uid):
+    """Qo'llanma video: har bir foydalanuvchiga birinchi marta «E'lon berish» bosilganda. file_id saqlanadi."""
+    u = user(uid)
+    if u.get("guide_seen"):
+        return
+    u["guide_seen"] = True
+    fid = S.get("guide_id")
+    r = api("sendVideo", chat_id=int(uid), video=fid, caption=GUIDE_CAP, parse_mode="HTML") if fid else None
+    if not r:
+        r = upload_video(uid, GUIDE_CAP)
+        if r and r.get("video"):
+            S["guide_id"] = r["video"]["file_id"]
+
+
 def send_invite(uid, link):
     """Do'stlarga bir yo'la forward qilish uchun tayyor taklif xabari (ssilka + matn)."""
     text = (f"🛍 <b>OLDI SOTDI</b> — oldi-sotdi e'lonlari kanali!\n✅ Sotib oling, soting, e'lon bering.\n\n"
@@ -788,6 +819,7 @@ def on_message(m):
     if uid in S["drafts"]:
         return draft_message(uid, m)
     if text in all_labels("btn_new"):
+        send_guide(uid)
         if not ensure_pass(uid):
             if u.get("vip") and time.time() < u["pass_until"]:  # VIP, limit tugagan: forma boshlanmaydi
                 return say(uid, "vip_wait", kb=menu_kb(uid), n=PASS_HOURS, m=PASS_ADS)
