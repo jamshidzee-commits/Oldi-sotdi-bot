@@ -1,5 +1,5 @@
 {
- "offset": 422275413,
+ "offset": 422275425,
  "next_id": 6,
  "admin": "339489226",
  "users": {
@@ -65,14 +65,15 @@
   },
   "8283070351": {
    "lang": "uz",
-   "link": null,
+   "link": "https://t.me/+yvULm-Cbx204YTgy",
    "invited": [],
    "unlocked": false,
    "used_inv": [],
    "pass_until": 0,
    "pass_used": 0,
    "uname": "Ramiljurayev",
-   "fname": "Ramil"
+   "fname": "Ramil",
+   "guide_seen": true
   }
  },
  "ads": {
@@ -273,7 +274,12 @@
    "group": null
   }
  },
- "drafts": {},
+ "drafts": {
+  "8283070351": {
+   "step": "title",
+   "photos": []
+  }
+ },
  "edit": {},
  "credited": {
   "5757531047": "6908278807",
@@ -289,7 +295,8 @@
   "7165977097": "6908278807"
  },
  "links": {
-  "https://t.me/+1fwZwXZ0Ar0yNGVi": "6908278807"
+  "https://t.me/+1fwZwXZ0Ar0yNGVi": "6908278807",
+  "https://t.me/+yvULm-Cbx204YTgy": "8283070351"
  },
  "admin_wait": "5",
  "logo_id": "AgACAgIAAxkDAANDawh8ES7Atw1N4nWypgNqxQOmFyIAAuEjaxvr5EFI8Cy17f1dem4BAAMCAAN5AAM9BA",
