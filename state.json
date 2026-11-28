@@ -1,6 +1,6 @@
 {
- "offset": 422275501,
- "next_id": 6,
+ "offset": 422275504,
+ "next_id": 7,
  "admin": "339489226",
  "users": {
   "339489226": {
@@ -82,7 +82,7 @@
    "unlocked": true,
    "used_inv": [],
    "pass_until": 1795954606.2050598,
-   "pass_used": 0,
+   "pass_used": 1,
    "uname": "Baxtiyor0902",
    "fname": "Baxtiyor",
    "guide_seen": true
@@ -283,21 +283,34 @@
    "fname": "Jimmy",
    "chan_ids": [],
    "group": null
+  },
+  "6": {
+   "uid": "38234907",
+   "uname": "Baxtiyor0902",
+   "title": "Planshet Samsung Tab 17",
+   "cat": "electro",
+   "price": "15000000",
+   "addr": "Yangiyol",
+   "land": "Niyozbosh",
+   "svc": null,
+   "photos": [
+    {
+     "t": "photo",
+     "f": "AgACAgIAAxkBAAIBqmsKxsyb8Vh1RGJITyqQGtYpNs53AAI6JWsbeAFYSA8lAgYNwHFdAQADAgADdwADPQQ"
+    }
+   ],
+   "status": "pending",
+   "ts": 1795868371,
+   "fname": "Baxtiyor",
+   "phone_enc": "gAAAAABrCsbTpWmKLYZ7qqb0tJyCo9aLLmXXuR4t3EXLOauK6CMznksqBLix3nYbKmmc4SkJu980MiyfVhAe6K-Qds9xpUjHJA==",
+   "chan_ids": [],
+   "group": null
   }
  },
  "drafts": {
   "8283070351": {
    "step": "title",
    "photos": []
-  },
-  "38234907": {
-   "step": "photos",
-   "photos": [],
-   "title": "Planshet Samsung Tab 17",
-   "cat": "electro",
-   "price": "15000000",
-   "addr": "Yangiyol",
-   "land": "Niyozbosh"
   }
  },
  "edit": {},
