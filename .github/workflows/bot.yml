@@ -31,6 +31,7 @@ jobs:
           ADMIN_CHAT_ID: ${{ vars.ADMIN_CHAT_ID }}
           INVITES_NEEDED: ${{ vars.INVITES_NEEDED }}
           DAILY_LIMIT: ${{ vars.DAILY_LIMIT }}
+          FREE_ACCESS: ${{ vars.FREE_ACCESS || '1' }}  # 1 = hamma VIP kabi (taklif shart emas); o'chirish: Settings -> Variables -> FREE_ACCESS = 0
         run: |
           git config user.name "oldi-sotdi-bot"
           git config user.email "bot@users.noreply.github.com"

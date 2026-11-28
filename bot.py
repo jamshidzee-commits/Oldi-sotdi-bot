@@ -356,13 +356,20 @@ def slots_left(uid):
     return max(0, PASS_ADS - u["pass_used"]) if time.time() < u["pass_until"] else 0
 
 
+FREE_ACCESS = os.environ.get("FREE_ACCESS", "0") == "1"  # vaqtincha: hamma VIP kabi (taklif shart emas)
+
+
+def is_vip(u):
+    return bool(u.get("vip")) or FREE_ACCESS
+
+
 def ensure_pass(uid):
     """E'lon berish mumkinmi? Faol paket bo'lsa ha. Yo'q bo'lsa, NEED ta yangi taklif qilingan bo'lsa yangi paket
     (PASS_HOURS soat, PASS_ADS ta e'lon) ochiladi. Admin uchun doim ochiq."""
     u = user(uid)
     if is_admin(uid) or slots_left(uid) > 0:
         return True
-    if u.get("vip") and time.time() >= u["pass_until"]:  # tanishlar (VIP): taklifsiz, har 24 soatda yangi paket
+    if is_vip(u) and time.time() >= u["pass_until"]:  # tanishlar (VIP): taklifsiz, har 24 soatda yangi paket
         u["pass_until"] = time.time() + PASS_HOURS * 3600
         u["pass_used"] = 0
         u["unlocked"] = True
@@ -858,7 +865,7 @@ def on_message(m):
     if text in all_labels("btn_new"):
         send_guide(uid)
         if not ensure_pass(uid):
-            if u.get("vip") and time.time() < u["pass_until"]:  # VIP, limit tugagan: forma boshlanmaydi
+            if is_vip(u) and time.time() < u["pass_until"]:  # VIP, limit tugagan: forma boshlanmaydi
                 return say(uid, "vip_wait", kb=menu_kb(uid), n=PASS_HOURS, m=PASS_ADS)
             say(uid, "warn", n=NEED, h=PASS_HOURS, m=PASS_ADS, k=len(avail_invited(uid)))
         return start_draft(uid)
