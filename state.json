@@ -1,5 +1,5 @@
 {
- "offset": 422275410,
+ "offset": 422275413,
  "next_id": 6,
  "admin": "339489226",
  "users": {
@@ -62,6 +62,17 @@
    "pass_used": 0,
    "uname": "NodirAminjanov",
    "fname": "Nodir"
+  },
+  "8283070351": {
+   "lang": "uz",
+   "link": null,
+   "invited": [],
+   "unlocked": false,
+   "used_inv": [],
+   "pass_until": 0,
+   "pass_used": 0,
+   "uname": "Ramiljurayev",
+   "fname": "Ramil"
   }
  },
  "ads": {
