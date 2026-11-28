@@ -1,5 +1,5 @@
 {
- "offset": 422275399,
+ "offset": 422275410,
  "next_id": 6,
  "admin": "339489226",
  "users": {
@@ -262,16 +262,7 @@
    "group": null
   }
  },
- "drafts": {
-  "6908278807": {
-   "step": "addr",
-   "photos": [],
-   "title": "Полд",
-   "cat": "service",
-   "price": "Полдд",
-   "svc": "both"
-  }
- },
+ "drafts": {},
  "edit": {},
  "credited": {
   "5757531047": "6908278807",
