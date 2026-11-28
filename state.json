@@ -1,5 +1,5 @@
 {
- "offset": 422275486,
+ "offset": 422275487,
  "next_id": 6,
  "admin": "339489226",
  "users": {
@@ -46,7 +46,7 @@
     "3749536"
    ],
    "pass_until": 1795881405.1462402,
-   "pass_used": 1,
+   "pass_used": 0,
    "uname": "Jimmyjim1212",
    "fname": "Jimmy",
    "vip": true,
@@ -266,10 +266,9 @@
      "f": "AgACAgIAAxkBAAIBK2sJ0kBvwr9_D2Jf2NgPeuLbCL-KAAJ-KGsbsXRQSANIpP8hNEHIAQADAgADeQADPQQ"
     }
    ],
-   "status": "pending",
+   "status": "rejected",
    "ts": 1795805773,
    "fname": "Jimmy",
-   "phone_enc": "gAAAAABrCdJNYy1gyQ5JFqv19_s4ecE7yhsWbud90ob9BcU8y3USznfs4EJrOnsH5q37IhftPWIqpmys24Ip9GPalGpMrSUNUQ==",
    "chan_ids": [],
    "group": null
   }
@@ -298,7 +297,7 @@
   "https://t.me/+1fwZwXZ0Ar0yNGVi": "6908278807",
   "https://t.me/+yvULm-Cbx204YTgy": "8283070351"
  },
- "admin_wait": "5",
+ "admin_wait": null,
  "logo_id": "AgACAgIAAxkDAANDawh8ES7Atw1N4nWypgNqxQOmFyIAAuEjaxvr5EFI8Cy17f1dem4BAAMCAAN5AAM9BA",
  "vip_codes": {},
  "guide_id": "BAACAgIAAxkDAAIBQWsKmIOsXwqxUcMKrk9wXqF027a4AAKUrQACsXRYSBwRyMJL3NFcPQQ"
