@@ -33,6 +33,7 @@ CATS = {  # kalit: (emoji, uz, ru, hashtag)
     "electro": ("📱", "Elektronika", "Электроника", "elektronika"),
     "clothes": ("👕", "Kiyim-kechak", "Одежда", "kiyim"),
     "home": ("🛋", "Uy-ro'zg'or", "Дом и быт", "uy_rozgor"),
+    "service": ("🛠", "Xizmatlar", "Услуги", "xizmatlar"),
     "other": ("📦", "Boshqa", "Другое", "boshqa"),
 }
 
@@ -52,6 +53,9 @@ T = {
         "ask_cat": "Toifani tanlang:",
         "ask_price": "Narxini yozing (masalan: 5 000 000 so'm yoki kelishiladi).",
         "ask_addr": "Manzilni yozing (shahar, tuman, ko'cha).",
+        "ask_svc": "Xizmat qayerda ko'rsatiladi?",
+        "svc_visit": "🚚 Uyga chiqaman", "svc_shop": "🏢 Ustaxona / ofisda", "svc_both": "🚚+🏢 Ikkalasi ham",
+        "ask_addr_shop": "Ustaxona / ofis manzilini yozing (shahar, tuman, ko'cha).",
         "ask_land": "Mo'ljalni yozing (masalan: bozor yonida).",
         "ask_photo": "Rasm yoki video yuboring (jami {m} tagacha). Tugagach «✅ Tayyor» tugmasini bosing.",
         "photo_ok": "Qabul qilindi: {k}/{m}",
@@ -95,6 +99,9 @@ T = {
         "ask_cat": "Выберите категорию:",
         "ask_price": "Напишите цену (например: 5 000 000 сум или договорная).",
         "ask_addr": "Напишите адрес (город, район, улица).",
+        "ask_svc": "Где вы оказываете услугу?",
+        "svc_visit": "🚚 Выезжаю к клиенту", "svc_shop": "🏢 В мастерской / офисе", "svc_both": "🚚+🏢 И то и другое",
+        "ask_addr_shop": "Напишите адрес мастерской / офиса (город, район, улица).",
         "ask_land": "Напишите ориентир (например: возле рынка).",
         "ask_photo": "Отправьте фото или видео (всего до {m}). Когда закончите, нажмите «✅ Готово».",
         "photo_ok": "Принято: {k}/{m}",
@@ -426,8 +433,17 @@ def build_caption(ad, phone=None, sold=False):
     foot = ('👆👆👆 <a href="%s">Kanalga o\'tish / Перейти в канал</a>' % CHANNEL_LINK) if CHANNEL_LINK else "👆👆👆 OLDI SOTDI"
     if sold:
         return f"{T['uz']['sold_label']} / {T['ru']['sold_label']}\n\n{emoji} <s>{title}</s>\n💰 <s>{e(ad['price'])}</s>\n\n#{tag}\n{foot}"
-    lines = [f"{emoji} <b>{title}</b>", "", f"💰 Narxi: {e(ad['price'])}", f"📍 Manzil: {e(ad['addr'])}",
-             f"🧭 Mo'ljal: {e(ad['land'])}", f"📞 Tel: {e(phone)}"]
+    lines = [f"{emoji} <b>{title}</b>", "", f"💰 Narxi: {e(ad['price'])}"]
+    svc = ad.get("svc") if ad["cat"] == "service" else None
+    if svc in ("visit", "both"):
+        lines.append("🚚 Uyga chiqib xizmat ko'rsatadi / Выезд к клиенту")
+    if svc == "shop":
+        lines.append("🏢 Ustaxona / ofisda / В мастерской (офисе)")
+    if ad.get("addr"):
+        lines.append(f"📍 Manzil: {e(ad['addr'])}")
+    if ad.get("land"):
+        lines.append(f"🧭 Mo'ljal: {e(ad['land'])}")
+    lines.append(f"📞 Tel: {e(phone)}")
     if ad.get("uname"):
         lines.append(f"✍️ Telegram: @{e(ad['uname'])}")
     lines += ["", f"#{tag}", foot]
@@ -459,6 +475,12 @@ def cat_kb(uid, prefix="ct:"):
     return {"inline_keyboard": rows}
 
 
+def svc_kb(uid):
+    return {"inline_keyboard": [[{"text": tr(uid, "svc_visit"), "callback_data": "sv:visit"}],
+                                [{"text": tr(uid, "svc_shop"), "callback_data": "sv:shop"}],
+                                [{"text": tr(uid, "svc_both"), "callback_data": "sv:both"}]]}
+
+
 def cancel(uid):
     S["drafts"].pop(str(uid), None)
     say(uid, "cancelled", kb=menu_kb(uid))
@@ -479,6 +501,9 @@ def draft_message(uid, m):
             d["step"] = "cat"
             return say(uid, "ask_cat", kb=cat_kb(uid))
         if step == "price":
+            if d.get("cat") == "service":
+                d["step"] = "svc"
+                return say(uid, "ask_svc", kb=svc_kb(uid))
             d["step"] = "addr"
             return say(uid, "ask_addr")
         if step == "addr":
@@ -488,6 +513,8 @@ def draft_message(uid, m):
         return say(uid, "ask_photo", kb=photo_kb(uid), m=MAX_PHOTOS)
     if step == "cat":
         return say(uid, "ask_cat", kb=cat_kb(uid))
+    if step == "svc":
+        return say(uid, "ask_svc", kb=svc_kb(uid))
     if step == "photos":
         if m.get("photo") or m.get("video"):
             if len(d["photos"]) < MAX_PHOTOS:
@@ -517,7 +544,7 @@ def submit_ad(uid, m, phone):
     aid = str(S["next_id"])
     S["next_id"] += 1
     ad = {"uid": str(uid), "uname": (m["from"].get("username") or ""), "title": d["title"], "cat": d["cat"], "price": d["price"],
-          "addr": d["addr"], "land": d["land"], "photos": d["photos"], "status": "waiting", "ts": int(now),
+          "addr": d.get("addr", ""), "land": d.get("land", ""), "svc": d.get("svc"), "photos": d["photos"], "status": "waiting", "ts": int(now),
           "fname": m["from"].get("first_name") or "",
           "phone_enc": FERNET.encrypt(phone.encode()).decode(), "chan_ids": [], "group": None}
     S["ads"][aid] = ad
@@ -627,6 +654,16 @@ def on_callback(cb):
             d["cat"] = data[3:]
             d["step"] = "price"
             say(uid, "ask_price")
+    elif data.startswith("sv:"):
+        d = S["drafts"].get(uid)
+        if d and d["step"] == "svc" and data[3:] in ("visit", "shop", "both"):
+            d["svc"] = data[3:]
+            if d["svc"] == "visit":  # manzil kerak emas: to'g'ridan-to'g'ri foto/videoga
+                d["addr"], d["land"], d["step"] = "", "", "photos"
+                say(uid, "ask_photo", kb=photo_kb(uid), m=MAX_PHOTOS)
+            else:
+                d["step"] = "addr"
+                say(uid, "ask_addr_shop")
     elif data.startswith("ap:") and is_admin(uid):
         ok = publish(data[3:])
         api("editMessageReplyMarkup", chat_id=msg["chat"]["id"], message_id=msg["message_id"],
