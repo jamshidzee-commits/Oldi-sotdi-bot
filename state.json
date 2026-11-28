@@ -1,5 +1,5 @@
 {
- "offset": 422275493,
+ "offset": 422275496,
  "next_id": 6,
  "admin": "339489226",
  "users": {
@@ -73,6 +73,18 @@
    "pass_used": 0,
    "uname": "Ramiljurayev",
    "fname": "Ramil",
+   "guide_seen": true
+  },
+  "38234907": {
+   "lang": "uz",
+   "link": null,
+   "invited": [],
+   "unlocked": true,
+   "used_inv": [],
+   "pass_until": 1795954606.2050598,
+   "pass_used": 0,
+   "uname": "Baxtiyor0902",
+   "fname": "Baxtiyor",
    "guide_seen": true
   }
  },
@@ -275,6 +287,10 @@
  },
  "drafts": {
   "8283070351": {
+   "step": "title",
+   "photos": []
+  },
+  "38234907": {
    "step": "title",
    "photos": []
   }
