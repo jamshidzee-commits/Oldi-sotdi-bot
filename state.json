@@ -1,5 +1,5 @@
 {
- "offset": 422275504,
+ "offset": 422275506,
  "next_id": 7,
  "admin": "339489226",
  "users": {
@@ -299,12 +299,17 @@
      "f": "AgACAgIAAxkBAAIBqmsKxsyb8Vh1RGJITyqQGtYpNs53AAI6JWsbeAFYSA8lAgYNwHFdAQADAgADdwADPQQ"
     }
    ],
-   "status": "pending",
+   "status": "live",
    "ts": 1795868371,
    "fname": "Baxtiyor",
    "phone_enc": "gAAAAABrCsbTpWmKLYZ7qqb0tJyCo9aLLmXXuR4t3EXLOauK6CMznksqBLix3nYbKmmc4SkJu980MiyfVhAe6K-Qds9xpUjHJA==",
-   "chan_ids": [],
-   "group": null
+   "chan_ids": [
+    32
+   ],
+   "group": {
+    "chat": -1005726577808,
+    "msg": 26
+   }
   }
  },
  "drafts": {
